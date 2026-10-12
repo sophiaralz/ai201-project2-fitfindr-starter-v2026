@@ -20,6 +20,8 @@ That last line is what your loop branches on. "Returns a list" earns nothing —
 the description has to say what is *in* the list.
 """
 
+import re
+
 import config  # noqa: F401 — you'll use this in search_listings
 from generate import generate
 from utils.data_loader import load_listings
@@ -38,7 +40,7 @@ def _keywords(text: str) -> set[str]:
 
 def _size_tokens(size: str) -> set[str]:
     cleaned = re.sub(r"\([^)]*\)", " ", size or "") # drop parentheticals
-    parts = [p.strip().upper for p in cleaned.split("/")]
+    parts = [p.strip().upper() for p in cleaned.split("/")]
     return {p for p in parts if p}
 
 def _size_matches(wanted: str, listing_size: str) -> bool:
@@ -102,7 +104,26 @@ def search_listings(
         python -c "from tools import search_listings; print(search_listings('graphic tee', max_price=30))"
     """
     # TODO: replace this with your implementation
-    return []
+    listings = load_listings()
+    filtered = []
+    for item in listings:
+        if max_price is not None and item["price"] > max_price:
+            continue
+        if not _size_matches(size, item["size"]):
+            continue
+        filtered.append(item)
+
+    wanted = _keywords(description)
+    scored = []
+    for item in filtered:
+        text = " ".join([item["title"], item["description"], " ".join(item["style_tags"])])
+        score = len(wanted & _keywords(text))
+        scored.append((score, item))
+
+    scored = [(score, item) for score, item in scored if score > 0]
+    scored.sort(key=lambda pair: pair[0], reverse=True)
+
+    return [item for score, item in scored[:config.SEARCH_RESULT_LIMIT]]
 
 
 # ── Tool 2: suggest_outfit ────────────────────────────────────────────────────
@@ -136,7 +157,34 @@ def suggest_outfit(new_item: dict, wardrobe: dict) -> str:
         python -c "from tools import suggest_outfit; from utils.data_loader import get_example_wardrobe, load_listings; print(suggest_outfit(load_listings()[0], get_example_wardrobe()))"
     """
     # TODO: replace this with your implementation
-    return ""
+
+    item_text = (
+        f"{new_item['title']} - {new_item['category']}, "
+        f"colors: {', '.join(new_item['colors'])}, "
+        f"style: {', '.join(new_item['style_tags'])}"
+    )
+
+    items = wardrobe.get("items") or []
+    # general styling advice if wardrobe is empty
+    if not items:
+        prompt = (
+            f"I just found this thrifted item: {item_text}.\n"
+            "I haven't told you what's in my closet. Suggest one or two outfits "
+            "built around it, naming the kinds of pieces that would go with it."
+        )
+    else:
+        closet = "\n".join(
+            f"- {piece['name']} ({piece['category']}, {', '.join(piece['colors'])})"
+            for piece in items
+        )
+        prompt = (
+            f"I just found this thrifted item: {item_text}.\n"
+            f"Here's what I already own:\n{closet}\n"
+            "Suggest one or two outfits pairing the new item with specific pieces "
+            "from my list. Name the pieces exactly as written."
+        )
+    return generate(prompt, system="You are a concisse stylist. Keep it under 120 words.")
+
 
 
 # ── Tool 3: create_fit_card ───────────────────────────────────────────────────
@@ -175,5 +223,27 @@ def create_fit_card(outfit: str, new_item: dict) -> str:
     Test it from a terminal before you move on:
         python -c "from tools import create_fit_card; from utils.data_loader import load_listings; print(create_fit_card('jeans and white sneakers', load_listings()[0]))"
     """
-    # TODO: replace this with your implementation
-    return ""
+    
+    if not outfit or not outfit.strip():
+        return "Couldn't write a fit card: no outfit suggestion was given for this item."
+
+    price = f"${new_item['price']:.2f}".removesuffix(".00")
+
+    prompt = (
+        f"Write a caption for a post about this thrifted find.\n"
+        f"Item: {new_item['title']}\n"
+        f"Price: {price}\n"
+        f"Platform: {new_item['platform']}\n"
+        f"Style: {', '.join(new_item['style_tags'])}\n"
+        f"How I'm wearing it: {outfit}\n\n"
+        f"Mention the item, the price ({price}) and the platform ({new_item['platform']}) "
+        "once each. Be specific about the vibe of the outfit."
+    )
+    return generate(
+        prompt,
+        system=(
+            "You write short social media captions about thrift finds. "
+            "Write 2 to 4 sentences, casual and first person, like a real post, "
+            "not a product description. Return only the caption."
+        ),
+    )
