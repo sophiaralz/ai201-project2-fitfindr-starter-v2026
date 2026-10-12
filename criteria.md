@@ -43,7 +43,6 @@ Given a query that matches no listings, the agent stops before calling
 ---
 
 ## 3. Something about state
-
 <!-- YOU WRITE THIS ONE.
 
      How would you know that the item your search found is the same item the
@@ -53,6 +52,7 @@ Given a query that matches no listings, the agent stops before calling
      look like state failure — it looks like a tool problem. Something that
      compares session["selected_item"] against what actually reached
      suggest_outfit is the shape you're after. -->
+
 
 
 

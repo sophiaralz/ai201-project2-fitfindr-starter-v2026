@@ -60,23 +60,39 @@
 ### `search_listings`
 
 - **What it does:**
+Searches the thrift listings data for items matching a keyword description, with optional filtering by size and a maximum price ceiling
 - **Inputs:** <!-- name and type each: `max_price` (float), not "a price" -->
+description (str), size(str | None), max_price(float | None)
 - **Returns:**
+A list of matching listing dictionaries sorted by keyword relevance score from highest to lowest. Each dictionary contains id, title, description, category, style_tags (list), size, condition, price (float), colors (list), brand (str or None), and platform
 - **When it has nothing:**
+Returns an empty list [] (not None and not an exception), which signals the planning loop branch to halt execution safely
 
 ### `suggest_outfit`
 
 - **What it does:**
+Given a thrifted item and the user's wardrobe, it suggests one or two outfits (calls the model).
 - **Inputs:**
+new_item (dict), wardrobe (dict)
 - **Returns:**
+A non-empty string with outfit suggestions. 
 - **When it has nothing:**
+When there is an empty wardrobe, it will return general styling advice (str)
 
 ### `create_fit_card`
 
-- **What it does:**
+- **What it does:** 
+Writes a short caption someone would actually post about the find (calls the model).
+
 - **Inputs:**
+outfit (str), new_item (dict)
+
 - **Returns:**
+A string, which is a two-to-four sentence caption.
+
 - **When it has nothing:**
+If the outfit is empty or a whitespace, it returns a descriptive message (str) rather than raising. 
+
 
 ---
 
@@ -93,7 +109,8 @@
      The grader checks your code against what you claim here, so the file and
      function have to be real. -->
 
-**Branch rule:**
+**Branch rule:** 
+If search_listings returns an empty list, put a message in the session and stop. Otherwise take the first result and go to suggest_outfit. 
 
 **Where it lives:** `agent.py::run_agent`
 
