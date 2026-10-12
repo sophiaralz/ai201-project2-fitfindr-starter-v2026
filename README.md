@@ -41,6 +41,7 @@
 
 <!-- Three or four sentences: what a user asks for, and what they get back. -->
 
+FitFindr helps someone shopping secondhand find a thrifted item and figure out how to wear it. The user types a request like "vintage graphic tee under $30, size M" and the agent searches 40 thrift listings from Depop, ThredUp, and Poshmark for the best match within their price and size. It then suggests one or two outfits that pair the find with clothes already in the user's wardrobe, and writes a short, social-media-style caption (a "fit card") naming the item, its price and where it's listed. If nothing matches, it stops early and tells the user what to change, like raising their price limit or dropping the size. 
 
 
 ---
@@ -116,7 +117,13 @@ If search_listings returns an empty list, put a message in the session and stop.
 
 **How the query is parsed:** <!-- regex, string splitting, or asking the model — say which -->
 
+Regex
+
 **What moves through the session:** <!-- which fields, in what order -->
+
+'parsed' -> 'search_results' -> 'selected_item' -> 'outfit_suggestion' -> 'fit_card'
+
+Each tool reads its input from the session and writes its result back. error is set only when the search comes back empty.
 
 ---
 
@@ -133,20 +140,31 @@ If search_listings returns an empty list, put a message in the session and stop.
 ```
 $ python app.py ask 'vintage graphic tee under $30'
 
+Found:    Y2K Baby Tee — Butterfly Print — $18.0 on depop
+
+Outfit:   **Outfit 1: Effortless Y2K Street**
+Pair the Y2K Baby Tee with your **Baggy straight-leg jeans, dark wash** and layer the **Black cropped zip hoodie** over top. Finish with **Chunky white sneakers** and your **Black crossbody bag**. 
+
+**Outfit 2: Casual Contrast**
+Combine the Y2K Baby Tee with your **Wide-leg khaki trousers** and slip on the **Vintage black denim jacket**. Accessorize with the **Brown leather belt** and **Chunky white sneakers**.
+
+  Fit card: Obsessed with this little butterfly tee I just scored for only $18! I'm listing it on depop today, but honestly, I'm tempted to keep it for myself to style with baggy denim or wide-leg khakis. It’s giving total early 2000s off-duty model energy.
+
 ```
+ 
 
 **The three tools, tested one at a time**
 
 ```
 $ python -c "from tools import search_listings; print(search_listings('graphic tee', max_price=30))"
 
-```
 [{'id': 'lst_002', 'title': 'Y2K Baby Tee — Butterfly Print', 'description': 'Super cute early 2000s baby tee with butterfly graphic. Fitted crop length. Tag says medium but fits like a small.', 'category': 'tops', 'style_tags': ['y2k', 'vintage', 'graphic tee', 'cottagecore'], 'size': 'S/M', 'condition': 'excellent', 'price': 18.0, 'colors': ['white', 'pink', 'purple'], 'brand': None, 'platform': 'depop'}, {'id': 'lst_006', 'title': 'Graphic Tee — 2003 Tour Bootleg Style', 'description': 'Vintage-style bootleg tee with faded graphic. Slightly boxy fit. 100% cotton, soft and worn-in.', 'category': 'tops', 'style_tags': ['graphic tee', 'vintage', 'grunge', 'streetwear', 'band tee'], 'size': 'L', 'condition': 'good', 'price': 24.0, 'colors': ['black'], 'brand': None, 'platform': 'depop'}, {'id': 'lst_017', 'title': 'Mesh Long-Sleeve Top — Black', 'description': 'Sheer black mesh long-sleeve. Great for layering under a graphic tee or over a bralette. Stretchy material, fits true to size.', 'category': 'tops', 'style_tags': ['y2k', 'grunge', 'goth', 'layering'], 'size': 'S/M', 'condition': 'excellent', 'price': 15.0, 'colors': ['black'], 'brand': None, 'platform': 'depop'}, {'id': 'lst_033', 'title': 'Vintage Band Tee — Faded Grey', 'description': 'Faded grey band-style tee with distressed graphic. Crew neck. Fits boxy. Well-loved but no holes or major damage.', 'category': 'tops', 'style_tags': ['vintage', 'grunge', 'band tee', 'graphic tee', 'streetwear'], 'size': 'L', 'condition': 'fair', 'price': 19.0, 'colors': ['grey', 'charcoal'], 'brand': None, 'platform': 'depop'}, {'id': 'lst_011', 'title': 'Low-Rise Cargo Pants — Khaki', 'description': 'Y2K era low-rise cargo pants. Lots of pockets. Khaki color, slightly distressed at the hems. Great for layering with a long tee.', 'category': 'bottoms', 'style_tags': ['y2k', 'cargo', '2000s', 'streetwear'], 'size': 'W29', 'condition': 'fair', 'price': 27.0, 'colors': ['khaki', 'tan'], 'brand': None, 'platform': 'poshmark'}, {'id': 'lst_015', 'title': 'Vintage Graphic Hoodie — Faded Black', 'description': 'Faded black pullover hoodie with barely-visible vintage graphic on the chest. Cozy interior. Some pilling but adds to the worn-in look.', 'category': 'tops', 'style_tags': ['vintage', 'grunge', 'graphic', 'streetwear'], 'size': 'L', 'condition': 'fair', 'price': 26.0, 'colors': ['black', 'charcoal'], 'brand': None, 'platform': 'depop'}]
+
+```
+
 ```
 $ python -c "from tools import suggest_outfit; from utils.data_loader import get_example_wardrobe, load_listings; print(suggest_outfit(load_listings()[0], get_example_wardrobe()))"
 
-
-```
 **Outfit 1: Casual Streetwear**
 *   Vintage Levi's 501 Jeans — Medium Wash
 *   White ribbed tank top
@@ -158,12 +176,16 @@ $ python -c "from tools import suggest_outfit; from utils.data_loader import get
 *   Black cropped zip hoodie
 *   Black combat boots
 *   Brown leather belt
+
+```
+
 ```
 $ python -c "from tools import create_fit_card; from utils.data_loader import load_listings; print(create_fit_card('jeans and white sneakers', load_listings()[0]))"
 
+I finally scored the ultimate pair of vintage Levi's 501 jeans for just $38 and I am never taking them off. They are giving major effortless streetwear energy paired with my beat-up white sneakers for that classic off-duty look. Snagged these beauties on depop and my wardrobe has officially peaked.
 
 ```
-I finally scored the ultimate pair of vintage Levi's 501 jeans for just $38 and I am never taking them off. They are giving major effortless streetwear energy paired with my beat-up white sneakers for that classic off-duty look. Snagged these beauties on depop and my wardrobe has officially peaked.
+
 ---
 
 ## How I Used AI
@@ -177,15 +199,15 @@ I finally scored the ultimate pair of vintage Levi's 501 jeans for just $38 and 
 
 **Moment 1**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* I asked Claude to walk me through the TODO steps for search_listings: filtering by price and size, scoring by keyword overlap, and returning at most SEARCH_RESULT_LIMIT results.
+- *What came back:* It explained each step with a short code example. It also found a bug in the starter helpers: re was used but never imported.
+- *What I changed:* I added the filtering and scoring code to search_listings. My first test crashed with NameError: name 're' is not defined, which confirmed the import bug, so I fixed it and reran it. 
 
 **Moment 2**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* I asked Claude how to build the prompt for suggest_outfit, and what item_text and piece meant in the example code, because I didn't understand them. 
+- *What came back:* It explained that item_text uses f-strings and ','.join() to turn the listing dict into one sentence, and that piece is the loop variable for each wardrobe item. 
+- *What I changed:* I wrote suggest_outfit with 2 prompts, one for an empty wardrobe and one for a full one. My first version built the prompt but still ended with return "", so it never called the model. I fixed it and then tested it with the example wardrobe and the empty one. 
 
 <!-- ═══════════════════════ UNIT 4 — THE TEST ═══════════════════════
 

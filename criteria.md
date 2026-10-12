@@ -29,7 +29,8 @@ tool calls and returns a fit card — in at least 4 of 5 tries.
      "my search is a plain keyword match and some phrasings will miss" is a
      real answer. -->
 
-Phrasing variations or minor prompt shifts might cause a valid query to return 0 hits. Setting the target at 4 of 5 accomidates realistic model non-determinism during tool argument generation while requiring the core loop to remain generally reliable. 
+My search is a plain keyword match, so a different wording like "t-shirt" instead of "tee" can miss. Also, two of my tools call the model on the free tier, so a try can fail on a rate limit even when my code is right. That's why I allow one miss, but not more.
+
 ---
 
 ## 2. An impossible query stops before the second tool
@@ -42,6 +43,7 @@ Given a query that matches no listings, the agent stops before calling
      about this path? -->
 
 When 'search_listings' returns an empty list, stopping the flow depends entirely on explicit code logic rather than LLM reasoning. Because halting on empty results is handled by hardcoded execution control, it should succeed in 5 of 5 attempts. 
+
 ---
 
 ## 3. Something about state
