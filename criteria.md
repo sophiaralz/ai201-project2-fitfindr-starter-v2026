@@ -29,6 +29,7 @@ tool calls and returns a fit card — in at least 4 of 5 tries.
      "my search is a plain keyword match and some phrasings will miss" is a
      real answer. -->
 
+Phrasing variations or minor prompt shifts might cause a valid query to return 0 hits. Setting the target at 4 of 5 accomidates realistic model non-determinism during tool argument generation while requiring the core loop to remain generally reliable. 
 ---
 
 ## 2. An impossible query stops before the second tool
@@ -40,6 +41,7 @@ Given a query that matches no listings, the agent stops before calling
 <!-- Why is 5 of 5 reasonable here when criterion 1 isn't? What's different
      about this path? -->
 
+When 'search_listings' returns an empty list, stopping the flow depends entirely on explicit code logic rather than LLM reasoning. Because halting on empty results is handled by hardcoded execution control, it should succeed in 5 of 5 attempts. 
 ---
 
 ## 3. Something about state
@@ -53,12 +55,12 @@ Given a query that matches no listings, the agent stops before calling
      compares session["selected_item"] against what actually reached
      suggest_outfit is the shape you're after. -->
 
-
+When 'search_listing' returns matching items, the selected item's id stored in session state matches the id passed into 'suggest_outfit' in 5 of 5 tries. 
 
 
 **Why this target:**
 
-
+Passing the item id between tools is just regular Python code, not AI guessing. Since it's just Python dictionary lookups, it needs to work 100% of the time or the backend logic is just broken. 
 
 ---
 
@@ -75,10 +77,11 @@ Given a query that matches no listings, the agent stops before calling
      sentence? A card longer than a caption anyone would post? Any of those can
      be turned into a number. -->
 
-
+The caption inside the fit card explicitly includes the dollar amount (e.g., matching $ followed by the price) of the selected listing in 5 of 5 tries. 
 
 **Why this target:**
 
+Since the system prompt can explicitly instruct the model to include the dollar figure from the input context, failing to include it is a prompt-following error, so it should hit 5 of 5 tries.  
 
 
 ---
@@ -92,10 +95,11 @@ Given a query that matches no listings, the agent stops before calling
      search respects a price ceiling — anything, as long as it names a number
      or an observable outcome. -->
 
-
+When a search query specifies a maximum price (e.g., "under \$30"), 100% of the listings passed to 'suggest_outfit' have a price lower than or equal to that threshold across 5 of 5 tries
 
 **Why this target:**
 
+Recommending an item that exceeds the user's explicit budget breaks core functional requirements, so this must hold across all test attempts. 
 
 
 ---
