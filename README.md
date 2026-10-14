@@ -674,6 +674,8 @@ Yes. Counting fit cards that contain "list", "listed", "listing" or "sell"in the
 
 No criterion is missed. All five were 5/5 before and after. 
 
+However, the parser only understands "$" prices and exact sizes. "under 30 dollars" sets no price limit, and "size 8" never matches shoes sized "US 8". I'd add those patterns to the regex in 'run_agent'. I stopped because none of my scenarios test these phrasings, so I couldn't measure the fix. 
+
 
 
 
