@@ -215,7 +215,7 @@ I finally scored the ultimate pair of vintage Levi's 501 jeans for just $38 and 
 
 - *What came back:* It gave me a trace line for each step. For `create_fit_card` it suggested`inputs=session["selected_item"]`, which records only the item.
 
-- *What I changed* I noticed `create_fit_card` takes two inputs, the outfit *and* the item, so the trace would hide half of what went in. I asked about it, and changed the input to a string with both: `f"item: {title} | outfit: {outfit}"`. A dict wouldn't work, because `trace.py` shortens a dict to "dict with keys: …" and hides the values. When I added the trace, my `parse_query` step also crashed with `UnboundLocalError` because it used `parsed` before that variable existed, so I changed it to read `session["parsed"]` instead.
+- *What I changed:* I noticed `create_fit_card` takes two inputs, the outfit *and* the item, so the trace would hide half of what went in. I asked about it, and changed the input to a string with both: `f"item: {title} | outfit: {outfit}"`. A dict wouldn't work, because `trace.py` shortens a dict to "dict with keys: …" and hides the values. When I added the trace, my `parse_query` step also crashed with `UnboundLocalError` because it used `parsed` before that variable existed, so I changed it to read `session["parsed"]` instead.
 
 <!-- ═══════════════════════ UNIT 4 — THE TEST ═══════════════════════
 
