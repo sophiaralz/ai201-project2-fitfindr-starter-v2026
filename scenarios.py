@@ -47,6 +47,32 @@ SCENARIOS = [
     # For a fit-card criterion, you probably want the SAME query listed more
     # than once, or several different items, depending on what your criterion
     # actually says.
+
+    {
+        # any matching query. Criterion 3 - check the trace: the item in 
+        # select_item must be the same one in suggest_outfit's input
+        "name": "selected item reaches suggest_outfit",
+        "query": "platform sneakers",
+        "wardrobe" : "example",
+        "criterion": 3,
+    },
+    {
+        # the same item captioned 5 times. Criterion 4 - every fit card
+        # must include the item's dollar price.
+        "name" : "fit card includes the price",
+        "query" : "90's track jacket",
+        "wardrobe" : "example",
+        "criterion" : 4,
+    },
+
+    {
+        # A price ceiling with an expensive match in the data. Criterion 5 -
+        # the $75 leather bomber must never be picked.
+        "name" : "price ceiling respected",
+        "query" : "leather jacket under $40",
+        "wardrobe" : "example",
+        "criterion" : 5,
+    }
 ]
 
 WARDROBES = ("example", "empty")
