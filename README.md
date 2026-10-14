@@ -393,7 +393,11 @@ full. -->
 
 **What I changed:**
 
+I changed 'create_fit_card' in 'tools.py'. The prompt used to label the facts 'Price:' and 'Platform:'. I relabeled them 'Price I paid:' and 'Where I bought it:', and added to the system prompt that the user BOUGHT the item and is keeping it, and must never be described as selling or listing it. Nothing else changed. 
+
 **Which failure it was meant to fix:**
+
+In the before run, 6 of the 10 fit cards for criteria 1 and 4 said the user was *selling* the item ("I just listed her on Depop for $18", "Just listed this exact piece on Poshmark for $45"). The prompt only said 'Platform: depop', so the model guessed what the platform meant to the user, and often guessed "where I'm selling it."
 
 ### Run Log — After
 
@@ -649,7 +653,7 @@ Trace:
 <!-- If it made things worse, say that. Honestly reported, that earns full
      credit and is more interesting than one that worked. -->
 
-
+Yes. Counting fit cards that contain "list", "listed", "listing" or "sell"in the criteria 1 and 4 scenarios, it went from 6 of 10 to 0 of 10. 
 
 ---
 
@@ -658,6 +662,9 @@ Trace:
 <!-- For each criterion still missed: what you'd do, and why you stopped where
      you did. "I ran out of time" is fine if it's true. Pretending nothing is
      left is not. -->
+
+No criterion is missed. All five were 5/5 before and after. 
+
 
 
 

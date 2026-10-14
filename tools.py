@@ -230,20 +230,20 @@ def create_fit_card(outfit: str, new_item: dict) -> str:
     price = f"${new_item['price']:.2f}".removesuffix(".00")
 
     prompt = (
-        f"Write a caption for a post about this thrifted find.\n"
+        f"Write a caption for a post about something I just bought secondhand. \n"
         f"Item: {new_item['title']}\n"
-        f"Price: {price}\n"
-        f"Platform: {new_item['platform']}\n"
+        f"Price I paid: {price}\n"
+        f"Where I bought it: {new_item['platform']}\n"
         f"Style: {', '.join(new_item['style_tags'])}\n"
         f"How I'm wearing it: {outfit}\n\n"
-        f"Mention the item, the price ({price}) and the platform ({new_item['platform']}) "
+        f"Mention the item, the price I paid ({price}) and where I bought it ({new_item['platform']}) "
         "once each. Be specific about the vibe of the outfit."
     )
     return generate(
         prompt,
         system=(
-            "You write short social media captions about thrift finds. "
+            "You write short social media captions about thrift finds the user just BOUGHT and is keeping. "
             "Write 2 to 4 sentences, casual and first person, like a real post, "
-            "not a product description. Return only the caption."
+            "not a product description. Never say the user is selling, listing, or giving the item away. Return only the caption."
         ),
     )
