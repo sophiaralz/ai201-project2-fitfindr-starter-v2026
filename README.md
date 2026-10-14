@@ -229,16 +229,45 @@ I finally scored the ultimate pair of vintage Levi's 501 jeans for just $38 and 
 
 | Criterion | Target | Try 1 | Try 2 | Try 3 | Try 4 | Try 5 | Verdict |
 |---|---|---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |  |  |
+| 1. A matching query completes all 3 tools | 4 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 2. An impossible query stops before the second tool | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 3. Selected item reaches suggest_outfit | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 4. Fit card includes the item's dollar price | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 5. Price ceiling respected | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
 
 **Real output from one try**, pasted as text, naming the file and function
 that produced it:
 
 ```
+Criterion 1, Try 1, from results/run_2026-10-13_2258_before.md, written by run_eval.py::main, which runs agent.py::run_agent (search through mcp_server.py, outfit and fit card from tools.py).
+
+Query: vintage graphic tee under $30   Wardrobe: example
+
+- stopped early: no
+- selected_item: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+- search_results: 10
+
+Fit card:
+Found this absolute dream of a butterfly baby tee thrifting and I'm obsessed. I just listed her on Depop for $18, but honestly, I'm tempted to keep it for myself to style with baggy denim and chunky sneakers for the ultimate Y2K streetwear vibe. Go grab it before I change my mind!
+
+Trace:
+[1] parse_query
+      in:  vintage graphic tee under $30
+      out: {'description': 'vintage graphic tee', 'size': None, 'max_price': 30.0}
+[2] search_listings
+      in:  {'description': 'vintage graphic tee', 'size': None, 'max_price': 30.0}
+      out: 10 items: Y2K Baby Tee — Butterfly Print, Graphic Tee — 2003 Tour Bootleg Style, Vintage Band Tee — Faded Grey … +7 more
+      →    called via MCP (mcp_server.py)
+[3] select_item
+      out: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+      →    took the first result
+[4] suggest_outfit
+      in:  item: Y2K Baby Tee — Butterfly Print | wardrobe: 10 pieces
+      out: **Outfit 1: Y2K Streetwear** *   Y2K Baby Tee — Butterfly Print *   Baggy straight-leg jeans, dark wash *   Ch…
+[5] create_fit_card
+      in:  item: Y2K Baby Tee — Butterfly Print | outfit: **Outfit 1: Y2K Streetwear** *   Y2K Baby Tee — Butterfly Print…
+      out: Found this absolute dream of a butterfly baby tee thrifting and I'm obsessed. I just listed her on Depop for $…
+
 
 ```
 
@@ -264,16 +293,19 @@ that produced it:
 
 | # | Criterion | Target | Verdict | How I decided |
 |---|---|---|---|---|
-| 1 |  |  |  |  |
-| 2 |  |  |  |  |
-| 3 |  |  |  |  |
-| 4 |  |  |  |  |
-| 5 |  |  |  |  |
+| 1 | A matching query completes all 3 tools | 4 of 5 | MET (5/5) | All 5 tries show stopped early: no and a fit card, and the trace reaches [5] create_fit_card every time |
+| 2 | An impossible query stops before the second tool | 5 of 5 | MET (5/5) | All 5 show search_results: 0 and selected_item: (none), and the trace ends at [3] branch with no suggest_outfit. The message names three changes: price, size, and wording. |
+| 3 | Selected item's id matches the id passed to suggest_outfit | 5 of 5 | MET (5/5) | In all 5, the item in [3] select_item is the item in [4] suggest_outfit's input. The trace prints titles, not ids. All 40 titles in the data are unique, so matching titles means matching ids.|
+| 4 | Fit card includes the selected listing's dollar amount | 5 of 5 | MET (5/5) | The selected item was $45.0 in all 5 tries, and every caption contains "$45" |
+| 5 | Listings passed to suggest_outfit are within the price limit | 5 of 5 | MET (5/5) | max_price parsed as 40.0 every time, and the selected item was $12. The $75 Leather Bomber, which matches "leather jacket", never came back. |
 
 **Diagnoses**
 
+No criterion missed. Criteria 2, 3, and 5 test plain code (the regex parser, the price filter, and handling the item through the session), so 5/5 was expected. Criteria 1 and 4 depend on the model, and the free-tier rate limit didn't cause any failures this run. However, the run showed 2 problems by criteria doesn't measure.
 
+1. Captions get the story backwards. In 6 of the 10 fit cards from criteria 1 and 4, the model says the user is selling the item: "I just listed her on Depop for $18", "Just listed this exact piece on Poshmark for $45". The cause is my create_fit_card prompt, which says "Platform: depop" without saying that's where the item was bought. Criterion 4 still passed because the price was there
 
+2. The search engine treats all matching words equally. When a price filter excludes actual jackets, it falls back on less relevant items like belts simply because they share the word "leather". This shows that the search algorithm lacks keyword weighting. It doesn't understand that product categories (like "jacket") should carry more weight than attributes (like "leather")
 ---
 
 ## Loop Trace
