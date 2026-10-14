@@ -380,6 +380,7 @@ behaved differently afterwards. If the rewire didn't work, say exactly where it
 broke — the error text and the last thing that worked. That earns the point in
 full. -->
 
+In `agent.py::run_agent`, I replaced the direct `search_listings(...)` call with `call_tool("search_listings", {...})`, and registered the tool in `mcp_server.py`. The results didn't change: the same 10 listings for "vintage graphic tee" under $30, and `[]` for the impossible query, so my branch still works. The differences were that each search is a bit slower (it starts the server every time), and I had to fix my tool description, which wrongly said it matched on category, brand and colors.
 
 
 ---
