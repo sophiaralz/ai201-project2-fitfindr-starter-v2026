@@ -142,7 +142,7 @@ def run_agent(query: str, wardrobe: dict) -> dict:
     })
 
     session["search_results"] = results
-    trace.step("search_listings", inputs=parsed, returned=session["search_results"])
+    trace.step("search_listings", inputs=str(parsed), returned=session["search_results"], note="called via MCP (mcp_server.py)")
 
     # branch rule
     if not session["search_results"]:
@@ -159,16 +159,27 @@ def run_agent(query: str, wardrobe: dict) -> dict:
     session["selected_item"] = session["search_results"][0]
     trace.step("select_item", returned=session["selected_item"], note="took the first result")
 
-    count += 1
-    trace.check_iterations(count)
-    session["outfit_suggestion"] = suggest_outfit(session["selected_item"], session["wardrobe"])
-    trace.step("suggest_outfit", inputs=f"item: {session['selected_item']['title']} | wardrobe: {len(session['wardrobe']['items'])} pieces", returned=session["outfit_suggestion"])
+    try: 
+        count += 1
+        trace.check_iterations(count)
+        session["outfit_suggestion"] = suggest_outfit(session["selected_item"], session["wardrobe"])
+        trace.step("suggest_outfit", inputs=f"item: {session['selected_item']['title']} | wardrobe: {len(session['wardrobe']['items'])} pieces", returned=session["outfit_suggestion"])
 
 
-    count += 1
-    trace.check_iterations(count)
-    session["fit_card"] = create_fit_card(session["outfit_suggestion"], session["selected_item"])
-    trace.step("create_fit_card", inputs=f"item: {session['selected_item']['title']} | outfit: {session['outfit_suggestion']}", returned=session["fit_card"])
+        count += 1
+        trace.check_iterations(count)
+        session["fit_card"] = create_fit_card(session["outfit_suggestion"], session["selected_item"])
+        trace.step("create_fit_card", inputs=f"item: {session['selected_item']['title']} | outfit: {session['outfit_suggestion']}", returned=session["fit_card"])
+    except ModelUnavailable as exc:
+        session["error"] = (
+            f"Found {session['selected_item']['title']}, but couldn't reach the model to style it. "
+            f"{exc} Then run the same query again."
+        )
+        trace.step("model_unavailable", returned=str(exc), note="model call failed -> stopping")
+        return session
+    
+    return session
+
 
 
     return session
