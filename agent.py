@@ -19,6 +19,7 @@ import config
 import trace
 from tools import search_listings, suggest_outfit, create_fit_card
 from generate import ModelUnavailable
+from mcp_client import call_tool
 
 
 # ── session state ─────────────────────────────────────────────────────────────
@@ -124,15 +125,24 @@ def run_agent(query: str, wardrobe: dict) -> dict:
     description = description.strip()
 
     session["parsed"] = {"description": description, "size": size, "max_price": max_price}
+    trace.step("parse_query", inputs=query, returned=str(session["parsed"]))
+
 
     # search
     count += 1
     trace.check_iterations(count)
 
     parsed = session["parsed"]
-    session["search_results"] = search_listings(
-        parsed["description"], size=parsed["size"], max_price=parsed["max_price"]
-    )
+
+    # call search_listings via MCP 
+    results = call_tool("search_listings", {
+        "description" : parsed["description"],
+        "size" : parsed["size"],
+        "max_price" : parsed["max_price"]
+    })
+
+    session["search_results"] = results
+    trace.step("search_listings", inputs=parsed, returned=session["search_results"])
 
     # branch rule
     if not session["search_results"]:
@@ -143,17 +153,23 @@ def run_agent(query: str, wardrobe: dict) -> dict:
             tips.append(f"try without size {parsed['size']}")
         tips.append("use broader words, like 'jacket' instead of a specific style")
         session["error"] = f"No listings matched '{parsed['description']}'. Try: " + "; ".join(tips) + "."
+        trace.step("branch", returned=session["error"], note="search empty -> stopping before suggest_outfit")
         return session
 
     session["selected_item"] = session["search_results"][0]
+    trace.step("select_item", returned=session["selected_item"], note="took the first result")
 
     count += 1
     trace.check_iterations(count)
     session["outfit_suggestion"] = suggest_outfit(session["selected_item"], session["wardrobe"])
+    trace.step("suggest_outfit", inputs=f"item: {session['selected_item']['title']} | wardrobe: {len(session['wardrobe']['items'])} pieces", returned=session["outfit_suggestion"])
+
 
     count += 1
     trace.check_iterations(count)
     session["fit_card"] = create_fit_card(session["outfit_suggestion"], session["selected_item"])
+    trace.step("create_fit_card", inputs=f"item: {session['selected_item']['title']} | outfit: {session['outfit_suggestion']}", returned=session["fit_card"])
+
 
     return session
 
