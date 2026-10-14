@@ -209,6 +209,14 @@ I finally scored the ultimate pair of vintage Levi's 501 jeans for just $38 and 
 - *What came back:* It explained that item_text uses f-strings and ','.join() to turn the listing dict into one sentence, and that piece is the loop variable for each wardrobe item. 
 - *What I changed:* I wrote suggest_outfit with 2 prompts, one for an empty wardrobe and one for a full one. My first version built the prompt but still ended with return "", so it never called the model. I fixed it and then tested it with the example wardrobe and the empty one. 
 
+**Moment 3**
+
+- *What I asked for:* I asked Claude where to put 'trace.step()' calls in 'run_agent', one per step, so I could see the each tool's inputs and outputs
+
+- *What came back:* It gave me a trace line for each step. For `create_fit_card` it suggested`inputs=session["selected_item"]`, which records only the item.
+
+- *What I changed* I noticed `create_fit_card` takes two inputs, the outfit *and* the item, so the trace would hide half of what went in. I asked about it, and changed the input to a string with both: `f"item: {title} | outfit: {outfit}"`. A dict wouldn't work, because `trace.py` shortens a dict to "dict with keys: …" and hides the values. When I added the trace, my `parse_query` step also crashed with `UnboundLocalError` because it used `parsed` before that variable existed, so I changed it to read `session["parsed"]` instead.
+
 <!-- ═══════════════════════ UNIT 4 — THE TEST ═══════════════════════
 
      Don't fill these in during unit 3.
@@ -301,7 +309,7 @@ Trace:
 
 **Diagnoses**
 
-No criterion missed. Criteria 2, 3, and 5 test plain code (the regex parser, the price filter, and handling the item through the session), so 5/5 was expected. Criteria 1 and 4 depend on the model, and the free-tier rate limit didn't cause any failures this run. However, the run showed 2 problems by criteria doesn't measure.
+No criterion missed. Criteria 2, 3, and 5 test plain code (the regex parser, the price filter, and handling the item through the session), so 5/5 was expected. Criteria 1 and 4 depend on the model, and the free-tier rate limit didn't cause any failures this run. However, the run showed 2 problems my criteria doesn't measure.
 
 1. Captions get the story backwards. In 6 of the 10 fit cards from criteria 1 and 4, the model says the user is selling the item: "I just listed her on Depop for $18", "Just listed this exact piece on Poshmark for $45". The cause is my create_fit_card prompt, which says "Platform: depop" without saying that's where the item was bought. Criterion 4 still passed because the price was there
 
