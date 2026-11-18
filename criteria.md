@@ -137,3 +137,67 @@ Recommending an item that exceeds the user's explicit budget breaks core functio
      A number you missed stays where it is, gets diagnosed, and gets a fix
      attempted. That's where the points are.
      ───────────────────────────────────────────────────────────────────────── -->
+
+# Capstone criteria
+
+## 1. One log line per request
+
+Over a session of 15 requests to `/ask` (5 matching queries, 5 impossible
+queries, 5 empty requests), `logs/runs.jsonl` gains exactly 15 new lines — none
+missing, none duplicated. Every line except `rejected` ones has all of
+`timestamp`, `status`, `query`, `seconds`, `model_calls`, `cache_hits`,
+`prompt_tokens` and `output_tokens` — 15 of 15.
+
+**Why this target:**
+
+Writing the log line is plain Python with one `log_run()` call on each path, so there's no reason for it to ever miss. I made this target because I've already had a bug where the old `log_run()` line was left in and every request got logged twice, so duplicates are a real risk, not a made-up one. A missing line is worse: a failure that leaves no record is one I would never find, so anything less than 15 of 15 means the log can't be trusted.
+
+---
+
+## 2. The logged status matches what actually happened
+
+In the same 15-request session, each line's `status` matches the response the
+caller got: `ok` when the response has a fit card and `error` is null,
+`no_match` when the error starts with "No listings matched", `rejected` when the
+response is HTTP 400, and `model_unavailable` for any other error — 15 of 15.
+
+**Why this target:**
+
+The status comes from a few simple `if` checks in my code, not from the model, so it should be right every time. If the status is wrong, then any numbers I count from the log are wrong too. For example, if a failed run got logged as `ok`, FitFindr would look like it works better than it really does. I compare the status to the response the user actually got, not to the query, because even a good query can fail when the model is overloaded (too many people sending requests at the same moment and Gemini's servers can't keep up).
+
+---
+
+## 3. The cost fields count the right things
+
+With the cache off, every `ok` line in the 15-request session has
+`model_calls: 2`, `cache_hits: 0`, and `prompt_tokens` and `output_tokens`
+both above 0. Every `no_match` line has all four fields at 0 — 100% of lines.
+
+**Why this target:**
+
+A successful run always calls the model exactly twice (`suggest_outfit` and `create_fit_card`), and an impossible query stops before the model is ever called, so the right numbers are known ahead of time. The counts are just the difference between `generate.py`'s counters before and after the run, inside the one-request-at-a-time lock, so another request can't leak into them. My "What It Costs" number is averaged from these fields, so if they count wrong, my cost number is wrong.
+
+---
+
+## 4. When the model can't be reached, the failure is logged and the server keeps going
+
+With the server started using a broken API key, 5 matching queries each return
+a JSON error (not an HTML 500 page) and each write one `model_unavailable` line
+whose `output` contains the error message. After each one, an impossible query
+still returns `no_match`, and `/health` still returns `ok` — 5 of 5 tries.
+
+**Why this target:**
+
+This is the bad path. It already happened for real in Milestone 3, when the model failed twice because Gemini was overloaded. Using a broken API key makes the model fail every time, so I can test this on purpose instead of waiting for Gemini to go down again. My code already catches this kind of error, so it should work 5 of 5 times. The impossible query and the `/health` check don't need the model, so if they still work after a failure, I know the server is still running. One failed request is okay, but a failure that crashes the whole server is not.
+
+---
+
+## 5. A real run finishes in under 20 seconds
+
+With the cache off, the median `seconds` across 10 `ok` runs is under 20
+seconds, and at least 8 of the 10 finish in under 30 seconds. Runs that fail
+with `model_unavailable` don't count toward the 10.
+
+**Why this target:**
+
+In Milestone 3 my median was 19 seconds, but that was one session, and runs ranged from 13 to 42 seconds. I'm setting 20 seconds to test whether 19 was normal or a lucky session, not to give myself room. About 30 seconds is as long as I think someone would wait for a clothing suggestion before assuming it's broken. I allow 2 slow runs out of 10 because most of the time is the model answering, which I don't control. The 42-second run happened right when Gemini was overloaded.
