@@ -162,10 +162,17 @@ def ask():
     # Outside the lock: building a response is not work the next caller should
     # be waiting on.
     if failure is not None:
-        log_run(status="crashed", query=query, error=failure, second=seconds)
+        log_run(status="crashed", query=query, error=failure, seconds=seconds)
         return jsonify({"error": failure}), 500
 
-    log_run(query=query, output=session["fit_card"] or session["error"], seconds=seconds)  
+    if session["error"] is None:
+        status = "ok"
+    elif session["error"].startswith("No listings matched"):
+        status = "no_match"
+    else:
+        status = "model_unavailable"
+
+    log_run(status=status, query=query, output=session["fit_card"] or session["error"], seconds=seconds)
 
     return jsonify(session)
 
