@@ -1,0 +1,364 @@
+
+FitFindr is listening on http://localhost:5061
+It runs one request at a time — a second one waits for the first.
+Ask it something (single quotes, as always):
+
+  curl -X POST http://localhost:5061/ask \
+    -H 'Content-Type: application/json' \
+    -d '{"query": "vintage graphic tee under $30"}'
+
+Ctrl-C to stop.
+
+ * Serving Flask app 'serve'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5061
+ * Running on http://172.16.65.144:5061
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [17/Nov/2026 23:56:27] "GET /health HTTP/1.1" 200 -
+[1] parse_query
+      in:  vintage graphic tee under $30
+      out: {'description': 'vintage graphic tee', 'size': None, 'max_price': 30.0}
+[2] search_listings
+      in:  {'description': 'vintage graphic tee', 'size': None, 'max_price': 30.0}
+      out: 10 items: Y2K Baby Tee — Butterfly Print, Graphic Tee — 2003 Tour Bootleg Style, Vintage Band Tee — Faded Grey … +7 more
+      →    called via MCP (mcp_server.py)
+[3] select_item
+      out: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+      →    took the first result
+  [rate limit] service pushed back. Waiting 32s (attempt 1 of 5). This is the limiter doing its job, not a bug.
+[4] suggest_outfit
+      in:  item: Y2K Baby Tee — Butterfly Print | wardrobe: 10 pieces
+      out: **Outfit 1: Casual Y2K Streetwear** *   Y2K Baby Tee — Butterfly Print *   Baggy straight-leg jeans, dark wash…
+[5] create_fit_card
+      in:  item: Y2K Baby Tee — Butterfly Print | outfit: **Outfit 1: Casual Y2K Streetwear** *   Y2K Baby Tee — Butterfl…
+      out: Scored this butterfly print Y2K baby tee on Depop for just $18 and I am obsessed! It’s giving major nostalgic …
+{"timestamp": "2026-11-18T07:57:03+00:00", "status": "ok", "query": "vintage graphic tee under $30", "output": "Scored this butterfly print Y2K baby tee on Depop for just $18 and I am obsessed! It’s giving major nostalgic streetwear energy paired with baggy dark wash jeans and chunky sneakers, but I can't wait to toughen it up with wide-leg trousers and combat boots next. My closet has officially peaked.", "seconds": 35.38, "model_calls": 2, "refused_attempts": 1, "cache_hits": 0, "prompt_tokens": 467, "output_tokens": 158}
+127.0.0.1 - - [17/Nov/2026 23:57:03] "POST /ask HTTP/1.1" 200 -
+[6] parse_query
+      in:  denim jacket under $50
+      out: {'description': 'denim jacket', 'size': None, 'max_price': 50.0}
+[7] search_listings
+      in:  {'description': 'denim jacket', 'size': None, 'max_price': 50.0}
+      out: 7 items: Denim Jacket — Light Wash, Cropped, Vintage Levi's 501 Jeans — Medium Wash, 90s Track Jacket — Navy/White Stripe … +4 more
+      →    called via MCP (mcp_server.py)
+[8] select_item
+      out: Denim Jacket — Light Wash, Cropped ($42.0, poshmark)
+      →    took the first result
+[9] suggest_outfit
+      in:  item: Denim Jacket — Light Wash, Cropped | wardrobe: 10 pieces
+      out: **Outfit 1: Casual Streetwear** *   Top: White ribbed tank top *   Bottoms: Baggy straight-leg jeans, dark was…
+[10] create_fit_card
+      in:  item: Denim Jacket — Light Wash, Cropped | outfit: **Outfit 1: Casual Streetwear** *   Top: White ribbed tank …
+      out: Scored this perfect light wash cropped denim jacket on Poshmark for only $42 and I'm obsessed. Today I'm styli…
+{"timestamp": "2026-11-18T07:57:06+00:00", "status": "ok", "query": "denim jacket under $50", "output": "Scored this perfect light wash cropped denim jacket on Poshmark for only $42 and I'm obsessed. Today I'm styling it for that effortless double denim streetwear look with baggy dark wash jeans and chunky sneakers. It’s seriously the ultimate vintage staple for layering over oversized crews and trousers, too.", "seconds": 3.04, "model_calls": 2, "refused_attempts": 0, "cache_hits": 0, "prompt_tokens": 502, "output_tokens": 199}
+127.0.0.1 - - [17/Nov/2026 23:57:06] "POST /ask HTTP/1.1" 200 -
+[11] parse_query
+      in:  platform sneakers
+      out: {'description': 'platform sneakers', 'size': None, 'max_price': None}
+[12] search_listings
+      in:  {'description': 'platform sneakers', 'size': None, 'max_price': None}
+      out: 3 items: Platform Sneakers — White Chunky Sole, Platform Mary Janes — Black Patent, Low-Top Canvas Sneakers — Off-White
+      →    called via MCP (mcp_server.py)
+[13] select_item
+      out: Platform Sneakers — White Chunky Sole ($48.0, poshmark)
+      →    took the first result
+[14] suggest_outfit
+      in:  item: Platform Sneakers — White Chunky Sole | wardrobe: 10 pieces
+      out: **Outfit 1: Casual Streetwear** *   Baggy straight-leg jeans, dark wash *   White ribbed tank top *   Oversize…
+[15] create_fit_card
+      in:  item: Platform Sneakers — White Chunky Sole | outfit: **Outfit 1: Casual Streetwear** *   Baggy straight-leg j…
+      out: Scored these chunky white platform sneakers on Poshmark for just $48 and I am obsessed! They are giving the ul…
+{"timestamp": "2026-11-18T07:57:07+00:00", "status": "ok", "query": "platform sneakers", "output": "Scored these chunky white platform sneakers on Poshmark for just $48 and I am obsessed! They are giving the ultimate 90s streetwear energy with my baggy jeans and grey crewneck, but I can't wait to style them with wide-leg trousers for that classic Y2K contrast. Such a good addition to the rotation.", "seconds": 1.83, "model_calls": 2, "refused_attempts": 0, "cache_hits": 0, "prompt_tokens": 470, "output_tokens": 167}
+127.0.0.1 - - [17/Nov/2026 23:57:07] "POST /ask HTTP/1.1" 200 -
+[16] parse_query
+      in:  y2k baby tee
+      out: {'description': 'y2k baby tee', 'size': None, 'max_price': None}
+[17] search_listings
+      in:  {'description': 'y2k baby tee', 'size': None, 'max_price': None}
+      out: 9 items: Y2K Baby Tee — Butterfly Print, Low-Rise Cargo Pants — Khaki, Mesh Long-Sleeve Top — Black … +6 more
+      →    called via MCP (mcp_server.py)
+[18] select_item
+      out: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+      →    took the first result
+[19] suggest_outfit
+      in:  item: Y2K Baby Tee — Butterfly Print | wardrobe: 10 pieces
+      out: **Outfit 1: Y2K Streetwear** Pair your new butterfly tee with the baggy straight-leg jeans, black cropped zip …
+[20] create_fit_card
+      in:  item: Y2K Baby Tee — Butterfly Print | outfit: **Outfit 1: Y2K Streetwear** Pair your new butterfly tee with t…
+      out: Scored this Y2K butterfly print baby tee on Depop for just $18 and I’m literally obsessed. I can't wait to sty…
+{"timestamp": "2026-11-18T07:57:10+00:00", "status": "ok", "query": "y2k baby tee", "output": "Scored this Y2K butterfly print baby tee on Depop for just $18 and I’m literally obsessed. I can't wait to style it with baggy jeans and chunky sneakers for an effortless 2000s downtown look. It’s giving total early 2000s icon and I'm never taking it off.", "seconds": 2.14, "model_calls": 2, "refused_attempts": 0, "cache_hits": 0, "prompt_tokens": 478, "output_tokens": 174}
+127.0.0.1 - - [17/Nov/2026 23:57:10] "POST /ask HTTP/1.1" 200 -
+[21] parse_query
+      in:  cargo pants under $40
+      out: {'description': 'cargo pants', 'size': None, 'max_price': 40.0}
+[22] search_listings
+      in:  {'description': 'cargo pants', 'size': None, 'max_price': 40.0}
+      out: 2 items: Low-Rise Cargo Pants — Khaki, Corduroy Wide-Leg Pants — Rust
+      →    called via MCP (mcp_server.py)
+[23] select_item
+      out: Low-Rise Cargo Pants — Khaki ($27.0, poshmark)
+      →    took the first result
+[24] suggest_outfit
+      in:  item: Low-Rise Cargo Pants — Khaki | wardrobe: 10 pieces
+      out: **Y2K Streetwear Look:** Pair your Low-Rise Cargo Pants — Khaki with the **Black cropped zip hoodie** and **Ch…
+[25] create_fit_card
+      in:  item: Low-Rise Cargo Pants — Khaki | outfit: **Y2K Streetwear Look:** Pair your Low-Rise Cargo Pants — Khaki w…
+      out: Scored these khaki low-rise cargo pants on Poshmark for just $27 and I’m so obsessed. Throwing them on with a …
+{"timestamp": "2026-11-18T07:57:11+00:00", "status": "ok", "query": "cargo pants under $40", "output": "Scored these khaki low-rise cargo pants on Poshmark for just $27 and I’m so obsessed. Throwing them on with a cropped zip hoodie and chunky sneakers for the ultimate Y2K streetwear vibe. They fit like an absolute dream!", "seconds": 1.84, "model_calls": 2, "refused_attempts": 0, "cache_hits": 0, "prompt_tokens": 477, "output_tokens": 148}
+127.0.0.1 - - [17/Nov/2026 23:57:11] "POST /ask HTTP/1.1" 200 -
+[26] parse_query
+      in:  designer ballgown size XXS under $5
+      out: {'description': 'designer ballgown', 'size': 'XXS', 'max_price': 5.0}
+[27] search_listings
+      in:  {'description': 'designer ballgown', 'size': 'XXS', 'max_price': 5.0}
+      out: [] (empty)
+      →    called via MCP (mcp_server.py)
+[28] branch
+      out: No listings matched 'designer ballgown'. Try: raise your price limit above $5; try without size XXS; use broad…
+      →    search empty -> stopping before suggest_outfit
+{"timestamp": "2026-11-18T07:57:12+00:00", "status": "no_match", "query": "designer ballgown size XXS under $5", "output": "No listings matched 'designer ballgown'. Try: raise your price limit above $5; try without size XXS; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.35, "model_calls": 0, "refused_attempts": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+127.0.0.1 - - [17/Nov/2026 23:57:12] "POST /ask HTTP/1.1" 200 -
+[29] parse_query
+      in:  wedding dress under $2
+      out: {'description': 'wedding dress', 'size': None, 'max_price': 2.0}
+[30] search_listings
+      in:  {'description': 'wedding dress', 'size': None, 'max_price': 2.0}
+      out: [] (empty)
+      →    called via MCP (mcp_server.py)
+[31] branch
+      out: No listings matched 'wedding dress'. Try: raise your price limit above $2; use broader words, like 'jacket' in…
+      →    search empty -> stopping before suggest_outfit
+{"timestamp": "2026-11-18T07:57:12+00:00", "status": "no_match", "query": "wedding dress under $2", "output": "No listings matched 'wedding dress'. Try: raise your price limit above $2; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.31, "model_calls": 0, "refused_attempts": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+127.0.0.1 - - [17/Nov/2026 23:57:12] "POST /ask HTTP/1.1" 200 -
+[32] parse_query
+      in:  ski boots size 15 under $3
+      out: {'description': 'ski boots', 'size': '15', 'max_price': 3.0}
+[33] search_listings
+      in:  {'description': 'ski boots', 'size': '15', 'max_price': 3.0}
+      out: [] (empty)
+      →    called via MCP (mcp_server.py)
+[34] branch
+      out: No listings matched 'ski boots'. Try: raise your price limit above $3; try without size 15; use broader words,…
+      →    search empty -> stopping before suggest_outfit
+{"timestamp": "2026-11-18T07:57:12+00:00", "status": "no_match", "query": "ski boots size 15 under $3", "output": "No listings matched 'ski boots'. Try: raise your price limit above $3; try without size 15; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.31, "model_calls": 0, "refused_attempts": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+127.0.0.1 - - [17/Nov/2026 23:57:12] "POST /ask HTTP/1.1" 200 -
+[35] parse_query
+      in:  tuxedo size XXXL under $1
+      out: {'description': 'tuxedo', 'size': 'XXXL', 'max_price': 1.0}
+[36] search_listings
+      in:  {'description': 'tuxedo', 'size': 'XXXL', 'max_price': 1.0}
+      out: [] (empty)
+      →    called via MCP (mcp_server.py)
+[37] branch
+      out: No listings matched 'tuxedo'. Try: raise your price limit above $1; try without size XXXL; use broader words, …
+      →    search empty -> stopping before suggest_outfit
+{"timestamp": "2026-11-18T07:57:13+00:00", "status": "no_match", "query": "tuxedo size XXXL under $1", "output": "No listings matched 'tuxedo'. Try: raise your price limit above $1; try without size XXXL; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.31, "model_calls": 0, "refused_attempts": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+127.0.0.1 - - [17/Nov/2026 23:57:13] "POST /ask HTTP/1.1" 200 -
+[38] parse_query
+      in:  ballet slippers size 2 under $4
+      out: {'description': 'ballet slippers', 'size': '2', 'max_price': 4.0}
+[39] search_listings
+      in:  {'description': 'ballet slippers', 'size': '2', 'max_price': 4.0}
+      out: [] (empty)
+      →    called via MCP (mcp_server.py)
+[40] branch
+      out: No listings matched 'ballet slippers'. Try: raise your price limit above $4; try without size 2; use broader w…
+      →    search empty -> stopping before suggest_outfit
+{"timestamp": "2026-11-18T07:57:13+00:00", "status": "no_match", "query": "ballet slippers size 2 under $4", "output": "No listings matched 'ballet slippers'. Try: raise your price limit above $4; try without size 2; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.31, "model_calls": 0, "refused_attempts": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+127.0.0.1 - - [17/Nov/2026 23:57:13] "POST /ask HTTP/1.1" 200 -
+{"timestamp": "2026-11-18T07:57:13+00:00", "status": "rejected", "error": "no query in the request body"}
+127.0.0.1 - - [17/Nov/2026 23:57:13] "[31m[1mPOST /ask HTTP/1.1[0m" 400 -
+{"timestamp": "2026-11-18T07:57:13+00:00", "status": "rejected", "error": "no query in the request body"}
+127.0.0.1 - - [17/Nov/2026 23:57:13] "[31m[1mPOST /ask HTTP/1.1[0m" 400 -
+{"timestamp": "2026-11-18T07:57:13+00:00", "status": "rejected", "error": "no query in the request body"}
+127.0.0.1 - - [17/Nov/2026 23:57:13] "[31m[1mPOST /ask HTTP/1.1[0m" 400 -
+{"timestamp": "2026-11-18T07:57:13+00:00", "status": "rejected", "error": "no query in the request body"}
+127.0.0.1 - - [17/Nov/2026 23:57:13] "[31m[1mPOST /ask HTTP/1.1[0m" 400 -
+{"timestamp": "2026-11-18T07:57:13+00:00", "status": "rejected", "error": "no query in the request body"}
+127.0.0.1 - - [17/Nov/2026 23:57:13] "[31m[1mPOST /ask HTTP/1.1[0m" 400 -
+[41] parse_query
+      in:  vintage graphic tee under $30
+      out: {'description': 'vintage graphic tee', 'size': None, 'max_price': 30.0}
+[42] search_listings
+      in:  {'description': 'vintage graphic tee', 'size': None, 'max_price': 30.0}
+      out: 10 items: Y2K Baby Tee — Butterfly Print, Graphic Tee — 2003 Tour Bootleg Style, Vintage Band Tee — Faded Grey … +7 more
+      →    called via MCP (mcp_server.py)
+[43] select_item
+      out: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+      →    took the first result
+[44] suggest_outfit
+      in:  item: Y2K Baby Tee — Butterfly Print | wardrobe: 10 pieces
+      out: **Outfit 1: Casual Y2K Street** * Y2K Baby Tee — Butterfly Print * Baggy straight-leg jeans, dark wash * Vinta…
+[45] create_fit_card
+      in:  item: Y2K Baby Tee — Butterfly Print | outfit: **Outfit 1: Casual Y2K Street** * Y2K Baby Tee — Butterfly Prin…
+      out: Scored this adorable butterfly print Y2K baby tee on Depop for just $18 and I am obsessed. I’m living for the …
+{"timestamp": "2026-11-18T07:57:15+00:00", "status": "ok", "query": "vintage graphic tee under $30", "output": "Scored this adorable butterfly print Y2K baby tee on Depop for just $18 and I am obsessed. I’m living for the effortless Y2K street vibe paired with baggy dark wash denim, chunky sneakers, and a black denim jacket. Such an easy little top to throw on and instantly make an outfit.", "seconds": 2.03, "model_calls": 2, "refused_attempts": 0, "cache_hits": 0, "prompt_tokens": 468, "output_tokens": 157}
+127.0.0.1 - - [17/Nov/2026 23:57:15] "POST /ask HTTP/1.1" 200 -
+[46] parse_query
+      in:  denim jacket under $50
+      out: {'description': 'denim jacket', 'size': None, 'max_price': 50.0}
+[47] search_listings
+      in:  {'description': 'denim jacket', 'size': None, 'max_price': 50.0}
+      out: 7 items: Denim Jacket — Light Wash, Cropped, Vintage Levi's 501 Jeans — Medium Wash, 90s Track Jacket — Navy/White Stripe … +4 more
+      →    called via MCP (mcp_server.py)
+[48] select_item
+      out: Denim Jacket — Light Wash, Cropped ($42.0, poshmark)
+      →    took the first result
+[49] suggest_outfit
+      in:  item: Denim Jacket — Light Wash, Cropped | wardrobe: 10 pieces
+      out: **Outfit 1: Canadian Tuxedo** Layer the new Denim Jacket over the White ribbed tank top, paired with Baggy str…
+[50] create_fit_card
+      in:  item: Denim Jacket — Light Wash, Cropped | outfit: **Outfit 1: Canadian Tuxedo** Layer the new Denim Jacket ov…
+      out: Just scored this vintage cropped light wash denim jacket on Poshmark for only $42 and I'm obsessed! It’s the u…
+{"timestamp": "2026-11-18T07:57:17+00:00", "status": "ok", "query": "denim jacket under $50", "output": "Just scored this vintage cropped light wash denim jacket on Poshmark for only $42 and I'm obsessed! It’s the ultimate streetwear staple whether I'm styling it for a full Canadian tuxedo moment or layering it over a black hoodie and khakis. Safe to say this is going to be my new daily go-to jacket.", "seconds": 1.94, "model_calls": 2, "refused_attempts": 0, "cache_hits": 0, "prompt_tokens": 449, "output_tokens": 152}
+127.0.0.1 - - [17/Nov/2026 23:57:17] "POST /ask HTTP/1.1" 200 -
+[51] parse_query
+      in:  platform sneakers
+      out: {'description': 'platform sneakers', 'size': None, 'max_price': None}
+[52] search_listings
+      in:  {'description': 'platform sneakers', 'size': None, 'max_price': None}
+      out: 3 items: Platform Sneakers — White Chunky Sole, Platform Mary Janes — Black Patent, Low-Top Canvas Sneakers — Off-White
+      →    called via MCP (mcp_server.py)
+[53] select_item
+      out: Platform Sneakers — White Chunky Sole ($48.0, poshmark)
+      →    took the first result
+  [rate limit] 15 requests used this minute. Waiting 11s. This is normal.
+[54] suggest_outfit
+      in:  item: Platform Sneakers — White Chunky Sole | wardrobe: 10 pieces
+      out: **Outfit 1: Casual Streetwear** *   Baggy straight-leg jeans, dark wash *   White ribbed tank top *   Oversize…
+  [rate limit] 15 requests used this minute. Waiting 31s. This is normal.
+[55] create_fit_card
+      in:  item: Platform Sneakers — White Chunky Sole | outfit: **Outfit 1: Casual Streetwear** *   Baggy straight-leg j…
+      out: Score these chunky white platform sneakers on Poshmark for just $48 and I am never taking them off. They add t…
+{"timestamp": "2026-11-18T07:58:02+00:00", "status": "ok", "query": "platform sneakers", "output": "Score these chunky white platform sneakers on Poshmark for just $48 and I am never taking them off. They add the absolute best 90s streetwear height to baggy jeans and an oversized grey crewneck. Can't wait to style them with wide-leg khakis for that ultimate Y2K contrast look, too!", "seconds": 44.64, "model_calls": 2, "refused_attempts": 0, "cache_hits": 0, "prompt_tokens": 470, "output_tokens": 164}
+127.0.0.1 - - [17/Nov/2026 23:58:02] "POST /ask HTTP/1.1" 200 -
+[56] parse_query
+      in:  y2k baby tee
+      out: {'description': 'y2k baby tee', 'size': None, 'max_price': None}
+[57] search_listings
+      in:  {'description': 'y2k baby tee', 'size': None, 'max_price': None}
+      out: 9 items: Y2K Baby Tee — Butterfly Print, Low-Rise Cargo Pants — Khaki, Mesh Long-Sleeve Top — Black … +6 more
+      →    called via MCP (mcp_server.py)
+[58] select_item
+      out: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+      →    took the first result
+[59] suggest_outfit
+      in:  item: Y2K Baby Tee — Butterfly Print | wardrobe: 10 pieces
+      out: **Outfit 1: Y2K Streetwear** *   Y2K Baby Tee — Butterfly Print *   Baggy straight-leg jeans, dark wash *   Ch…
+[60] create_fit_card
+      in:  item: Y2K Baby Tee — Butterfly Print | outfit: **Outfit 1: Y2K Streetwear** *   Y2K Baby Tee — Butterfly Print…
+      out: Scored this absolute dream of a Y2K butterfly baby tee on Depop for just $18 and I am never taking it off. It’…
+{"timestamp": "2026-11-18T07:58:04+00:00", "status": "ok", "query": "y2k baby tee", "output": "Scored this absolute dream of a Y2K butterfly baby tee on Depop for just $18 and I am never taking it off. It’s giving major early-2000s streetwear energy when I pair it with baggy dark wash jeans and chunky sneakers, but I'm just as obsessed with styling it against wide-leg khakis and combat boots. My closet has officially peaked.", "seconds": 2.15, "model_calls": 2, "refused_attempts": 0, "cache_hits": 0, "prompt_tokens": 466, "output_tokens": 171}
+127.0.0.1 - - [17/Nov/2026 23:58:04] "POST /ask HTTP/1.1" 200 -
+[61] parse_query
+      in:  cargo pants under $40
+      out: {'description': 'cargo pants', 'size': None, 'max_price': 40.0}
+[62] search_listings
+      in:  {'description': 'cargo pants', 'size': None, 'max_price': 40.0}
+      out: 2 items: Low-Rise Cargo Pants — Khaki, Corduroy Wide-Leg Pants — Rust
+      →    called via MCP (mcp_server.py)
+[63] select_item
+      out: Low-Rise Cargo Pants — Khaki ($27.0, poshmark)
+      →    took the first result
+[64] suggest_outfit
+      in:  item: Low-Rise Cargo Pants — Khaki | wardrobe: 10 pieces
+      out: **Outfit 1: Off-Duty Y2K** Pair your new Low-Rise Cargo Pants — Khaki with the White ribbed tank top, Black cr…
+[65] create_fit_card
+      in:  item: Low-Rise Cargo Pants — Khaki | outfit: **Outfit 1: Off-Duty Y2K** Pair your new Low-Rise Cargo Pants — K…
+      out: Scored these low-rise khaki cargo pants on Poshmark for only $27 and I am obsessed. Total early 2000s off-duty…
+{"timestamp": "2026-11-18T07:58:07+00:00", "status": "ok", "query": "cargo pants under $40", "output": "Scored these low-rise khaki cargo pants on Poshmark for only $27 and I am obsessed. Total early 2000s off-duty energy when I pair them with a zip hoodie and chunky sneakers. Can't wait to lean into the ultimate streetwear edge with combat boots and an oversized crewneck next!", "seconds": 2.77, "model_calls": 2, "refused_attempts": 0, "cache_hits": 0, "prompt_tokens": 464, "output_tokens": 150}
+127.0.0.1 - - [17/Nov/2026 23:58:07] "POST /ask HTTP/1.1" 200 -
+[66] parse_query
+      in:  band tee
+      out: {'description': 'band tee', 'size': None, 'max_price': None}
+[67] search_listings
+      in:  {'description': 'band tee', 'size': None, 'max_price': None}
+      out: 5 items: Graphic Tee — 2003 Tour Bootleg Style, Vintage Band Tee — Faded Grey, Y2K Baby Tee — Butterfly Print … +2 more
+      →    called via MCP (mcp_server.py)
+[68] select_item
+      out: Graphic Tee — 2003 Tour Bootleg Style ($24.0, depop)
+      →    took the first result
+[69] suggest_outfit
+      in:  item: Graphic Tee — 2003 Tour Bootleg Style | wardrobe: 10 pieces
+      out: **Outfit 1: 90s Streetwear** * Graphic Tee — 2003 Tour Bootleg Style * Baggy straight-leg jeans, dark wash * V…
+[70] create_fit_card
+      in:  item: Graphic Tee — 2003 Tour Bootleg Style | outfit: **Outfit 1: 90s Streetwear** * Graphic Tee — 2003 Tour B…
+      out: Scored this bootleg 2003 tour tee on depop for just $24 and I'm obsessed. Already planning to wear it with bag…
+{"timestamp": "2026-11-18T07:58:09+00:00", "status": "ok", "query": "band tee", "output": "Scored this bootleg 2003 tour tee on depop for just $24 and I'm obsessed. Already planning to wear it with baggy dark denim and chunky sneakers for the ultimate 90s streetwear vibe. Such a good addition to the rotation!", "seconds": 2.01, "model_calls": 2, "refused_attempts": 0, "cache_hits": 0, "prompt_tokens": 476, "output_tokens": 151}
+127.0.0.1 - - [17/Nov/2026 23:58:09] "POST /ask HTTP/1.1" 200 -
+[71] parse_query
+      in:  mesh top
+      out: {'description': 'mesh top', 'size': None, 'max_price': None}
+[72] search_listings
+      in:  {'description': 'mesh top', 'size': None, 'max_price': None}
+      out: 3 items: Mesh Long-Sleeve Top — Black, Crochet Halter Top — Cream, Low-Top Canvas Sneakers — Off-White
+      →    called via MCP (mcp_server.py)
+[73] select_item
+      out: Mesh Long-Sleeve Top — Black ($15.0, depop)
+      →    took the first result
+[74] suggest_outfit
+      in:  item: Mesh Long-Sleeve Top — Black | wardrobe: 10 pieces
+      out: **Look 1 (Grunge Y2K):** Layer the *Mesh Long-Sleeve Top — Black* over your *White ribbed tank top*, paired wi…
+[75] create_fit_card
+      in:  item: Mesh Long-Sleeve Top — Black | outfit: **Look 1 (Grunge Y2K):** Layer the *Mesh Long-Sleeve Top — Black*…
+      out: Scored this black mesh long-sleeve top on Depop for just $15 and I am so obsessed. It’s giving the ultimate gr…
+{"timestamp": "2026-11-18T07:58:12+00:00", "status": "ok", "query": "mesh top", "output": "Scored this black mesh long-sleeve top on Depop for just $15 and I am so obsessed. It’s giving the ultimate grungy Y2K energy layered over a white ribbed tank with baggy jeans and combat boots. Can't wait to style it under an oversized crewneck with khaki trousers for that perfect contrast look!", "seconds": 2.86, "model_calls": 2, "refused_attempts": 0, "cache_hits": 0, "prompt_tokens": 494, "output_tokens": 194}
+127.0.0.1 - - [17/Nov/2026 23:58:12] "POST /ask HTTP/1.1" 200 -
+[76] parse_query
+      in:  vintage jeans under $50
+      out: {'description': 'vintage jeans', 'size': None, 'max_price': 50.0}
+[77] search_listings
+      in:  {'description': 'vintage jeans', 'size': None, 'max_price': 50.0}
+      out: 10 items: Vintage Levi's 501 Jeans — Medium Wash, Baggy Carpenter Jeans — Dark Wash, Straight Leg Black Jeans — Faded … +7 more
+      →    called via MCP (mcp_server.py)
+[78] select_item
+      out: Vintage Levi's 501 Jeans — Medium Wash ($38.0, depop)
+      →    took the first result
+[79] suggest_outfit
+      in:  item: Vintage Levi's 501 Jeans — Medium Wash | wardrobe: 10 pieces
+      out: **Outfit 1: Casual Streetwear** Pair your Vintage Levi's 501 Jeans — Medium Wash with the White ribbed tank to…
+[80] create_fit_card
+      in:  item: Vintage Levi's 501 Jeans — Medium Wash | outfit: **Outfit 1: Casual Streetwear** Pair your Vintage Levi'…
+      out: Scored these vintage Levi's 501 jeans on Depop for just $38 and I am never taking them off. They have the abso…
+{"timestamp": "2026-11-18T07:58:14+00:00", "status": "ok", "query": "vintage jeans under $50", "output": "Scored these vintage Levi's 501 jeans on Depop for just $38 and I am never taking them off. They have the absolute best lived-in medium wash for throwing on with a cropped zip hoodie and chunky sneakers for casual streetwear days. Can't wait to beat these up even more.", "seconds": 2.79, "model_calls": 2, "refused_attempts": 0, "cache_hits": 0, "prompt_tokens": 478, "output_tokens": 168}
+127.0.0.1 - - [17/Nov/2026 23:58:14] "POST /ask HTTP/1.1" 200 -
+[81] parse_query
+      in:  cardigan
+      out: {'description': 'cardigan', 'size': None, 'max_price': None}
+[82] search_listings
+      in:  {'description': 'cardigan', 'size': None, 'max_price': None}
+      out: 1 items: Knit Cardigan — Chunky Brown
+      →    called via MCP (mcp_server.py)
+[83] select_item
+      out: Knit Cardigan — Chunky Brown ($35.0, depop)
+      →    took the first result
+[84] suggest_outfit
+      in:  item: Knit Cardigan — Chunky Brown | wardrobe: 10 pieces
+      out: **Look 1: Cozy Neutral** Layer the **Knit Cardigan — Chunky Brown** open over the **White ribbed tank top** an…
+[85] create_fit_card
+      in:  item: Knit Cardigan — Chunky Brown | outfit: **Look 1: Cozy Neutral** Layer the **Knit Cardigan — Chunky Brown…
+      out: Just scored this chunky brown knit cardigan on Depop for only $35 and I am never taking it off! It’s giving th…
+{"timestamp": "2026-11-18T07:58:17+00:00", "status": "ok", "query": "cardigan", "output": "Just scored this chunky brown knit cardigan on Depop for only $35 and I am never taking it off! It’s giving the ultimate cozy cottagecore energy, whether I'm styling it oversized with earth-tone trousers or adding some edge with dark wash jeans and combat boots. My autumn wardrobe is officially complete.", "seconds": 2.31, "model_calls": 2, "refused_attempts": 0, "cache_hits": 0, "prompt_tokens": 510, "output_tokens": 200}
+127.0.0.1 - - [17/Nov/2026 23:58:17] "POST /ask HTTP/1.1" 200 -
+[86] parse_query
+      in:  black boots
+      out: {'description': 'black boots', 'size': None, 'max_price': None}
+[87] search_listings
+      in:  {'description': 'black boots', 'size': None, 'max_price': None}
+      out: 8 items: Oversized Flannel Shirt — Plaid Red/Black, Platform Mary Janes — Black Patent, Vintage Graphic Hoodie — Faded Black … +5 more
+      →    called via MCP (mcp_server.py)
+[88] select_item
+      out: Oversized Flannel Shirt — Plaid Red/Black ($22.0, thredUp)
+      →    took the first result
+[89] suggest_outfit
+      in:  item: Oversized Flannel Shirt — Plaid Red/Black | wardrobe: 10 pieces
+      out: **Outfit 1: 90s Grunge Layering** Wear the oversized flannel shirt open over the white ribbed tank top, paired…
+  [rate limit] 15 requests used this minute. Waiting 10s. This is normal.
+  [rate limit] service pushed back. Waiting 32s (attempt 1 of 5). This is the limiter doing its job, not a bug.
+[90] create_fit_card
+      in:  item: Oversized Flannel Shirt — Plaid Red/Black | outfit: **Outfit 1: 90s Grunge Layering** Wear the oversized…
+      out: Scored this red and black oversized flannel on thredUp for just $22, and it’s officially my new uniform. I'm o…
+{"timestamp": "2026-11-18T07:59:02+00:00", "status": "ok", "query": "black boots", "output": "Scored this red and black oversized flannel on thredUp for just $22, and it’s officially my new uniform. I'm obsessed with throwing it over a ribbed tank with baggy denim and combat boots for that effortless 90s grunge look. Seriously never taking this off.", "seconds": 44.98, "model_calls": 2, "refused_attempts": 1, "cache_hits": 0, "prompt_tokens": 474, "output_tokens": 155}
+127.0.0.1 - - [17/Nov/2026 23:59:02] "POST /ask HTTP/1.1" 200 -

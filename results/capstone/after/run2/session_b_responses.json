@@ -1,0 +1,72 @@
+[
+  {
+    "query": "vintage graphic tee under $30",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored this adorable butterfly print Y2K baby tee on Depop for just $18 and I am obsessed. I’m living for the effortless Y2K street vibe paired with baggy dark wash denim, chunky sneakers, and a black denim jacket. Such an easy little top to throw on and instantly make an outfit."
+  },
+  {
+    "query": "denim jacket under $50",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Just scored this vintage cropped light wash denim jacket on Poshmark for only $42 and I'm obsessed! It’s the ultimate streetwear staple whether I'm styling it for a full Canadian tuxedo moment or layering it over a black hoodie and khakis. Safe to say this is going to be my new daily go-to jacket."
+  },
+  {
+    "query": "platform sneakers",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Score these chunky white platform sneakers on Poshmark for just $48 and I am never taking them off. They add the absolute best 90s streetwear height to baggy jeans and an oversized grey crewneck. Can't wait to style them with wide-leg khakis for that ultimate Y2K contrast look, too!"
+  },
+  {
+    "query": "y2k baby tee",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored this absolute dream of a Y2K butterfly baby tee on Depop for just $18 and I am never taking it off. It’s giving major early-2000s streetwear energy when I pair it with baggy dark wash jeans and chunky sneakers, but I'm just as obsessed with styling it against wide-leg khakis and combat boots. My closet has officially peaked."
+  },
+  {
+    "query": "cargo pants under $40",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored these low-rise khaki cargo pants on Poshmark for only $27 and I am obsessed. Total early 2000s off-duty energy when I pair them with a zip hoodie and chunky sneakers. Can't wait to lean into the ultimate streetwear edge with combat boots and an oversized crewneck next!"
+  },
+  {
+    "query": "band tee",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored this bootleg 2003 tour tee on depop for just $24 and I'm obsessed. Already planning to wear it with baggy dark denim and chunky sneakers for the ultimate 90s streetwear vibe. Such a good addition to the rotation!"
+  },
+  {
+    "query": "mesh top",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored this black mesh long-sleeve top on Depop for just $15 and I am so obsessed. It’s giving the ultimate grungy Y2K energy layered over a white ribbed tank with baggy jeans and combat boots. Can't wait to style it under an oversized crewneck with khaki trousers for that perfect contrast look!"
+  },
+  {
+    "query": "vintage jeans under $50",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored these vintage Levi's 501 jeans on Depop for just $38 and I am never taking them off. They have the absolute best lived-in medium wash for throwing on with a cropped zip hoodie and chunky sneakers for casual streetwear days. Can't wait to beat these up even more."
+  },
+  {
+    "query": "cardigan",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Just scored this chunky brown knit cardigan on Depop for only $35 and I am never taking it off! It’s giving the ultimate cozy cottagecore energy, whether I'm styling it oversized with earth-tone trousers or adding some edge with dark wash jeans and combat boots. My autumn wardrobe is officially complete."
+  },
+  {
+    "query": "black boots",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored this red and black oversized flannel on thredUp for just $22, and it’s officially my new uniform. I'm obsessed with throwing it over a ribbed tank with baggy denim and combat boots for that effortless 90s grunge look. Seriously never taking this off."
+  }
+]

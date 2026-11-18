@@ -2,8 +2,9 @@
 """
 Capstone test: runs everything criteria.md's capstone criteria need, three times.
 
-    python capstone_eval.py              three runs (the default)
-    python capstone_eval.py --runs 1     one run
+    python capstone_eval.py --label before    three runs → results/capstone/before/
+    python capstone_eval.py --label after     three runs → results/capstone/after/
+    python capstone_eval.py --runs 1          one run
 
 Each run does three sessions against fresh `serve.py` processes, cache off:
 
@@ -12,8 +13,8 @@ Each run does three sessions against fresh `serve.py` processes, cache off:
   C  broken key — 5 rounds of matching / impossible / health  → criterion 4
 
 Nothing in serve.py or the agent changes between runs. Every response, every
-new log line and the server's own output are saved to results/capstone/runN/,
-and the scores go to results/capstone/summary.md. Verdicts are left to me.
+new log line and the server's own output are saved to results/capstone/<label>/runN/,
+and the scores go to results/capstone/<label>/summary.md. Verdicts are left to me.
 """
 
 import argparse
@@ -223,8 +224,8 @@ def score_5(lines):
 
 # ── one full run ──────────────────────────────────────────────────────────────
 
-def one_run(n):
-    run_dir = OUT / f"run{n}"
+def one_run(n, out):
+    run_dir = out / f"run{n}"
     run_dir.mkdir(parents=True, exist_ok=True)
     print(f"\n=== Run {n} ===", flush=True)
 
@@ -272,9 +273,11 @@ def one_run(n):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--runs", type=int, default=3)
+    parser.add_argument("--label", default="before")
     args = parser.parse_args()
+    out = OUT / args.label
 
-    all_scores = [one_run(n) for n in range(1, args.runs + 1)]
+    all_scores = [one_run(n, out) for n in range(1, args.runs + 1)]
 
     def cell(s, k):
         if k == "5":
@@ -295,7 +298,7 @@ def main():
     for i, (name, target) in enumerate(rows, start=1):
         table.append(f"| {name} | {target} | "
                      + " | ".join(cell(s, str(i)) for s in all_scores) + " |  |")
-    (OUT / "summary.md").write_text("\n".join(table) + "\n")
+    (out / "summary.md").write_text("\n".join(table) + "\n")
     print("\n" + "\n".join(table))
 
 

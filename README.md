@@ -801,7 +801,7 @@ This is the full log from one session, run with the cache off (`AI201_CACHE=0 py
 - **Failures cost something too:** a run that fails on the second model call still spends tokens. Out of 12 runs that reached the model, 2 failed (about 1 in 6), all from the 503.
 
 
-## Capstone Run Log
+## Capstone Run Log — Before
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
@@ -814,7 +814,7 @@ This is the full log from one session, run with the cache off (`AI201_CACHE=0 py
 
 ### Capstone Criterion 1 Output — one log line per request
 
-Produced by `serve.py::log_run`, called from `serve.py::ask`. Run 2, session A: 15 requests, and these are the 15 lines `logs/runs.jsonl` gained (`results/capstone/run2/session_a_log.jsonl`):
+Produced by `serve.py::log_run`, called from `serve.py::ask`. Run 2, session A: 15 requests, and these are the 15 lines `logs/runs.jsonl` gained (`results/capstone/before/run2/session_a_log.jsonl`):
 
 ```
 {"timestamp": "2026-11-18T07:32:02+00:00", "status": "ok", "query": "vintage graphic tee under $30", "output": "Scored this gorgeous butterfly print Y2K baby tee on Depop for only $18 and I’m obsessed. I'm leaning all the way into the nostalgic vibes today, pairing it with baggy dark-wash jeans and chunky sneakers. It’s giving effortless 2000s comfort, but I can't wait to toughen it up with combat boots and a distressed denim jacket next time.", "seconds": 61.72, "model_calls": 3, "cache_hits": 0, "prompt_tokens": 492, "output_tokens": 200}
@@ -836,7 +836,7 @@ Produced by `serve.py::log_run`, called from `serve.py::ask`. Run 2, session A: 
 
 ### Capstone Criterion 2 Output — status matches the response
 
-Responses produced by `serve.py::ask` and recorded by `capstone_eval.py::ask` (HTTP code, whether the body was JSON, and the body's `error` and `fit_card`). Run 2, session A, one per kind of request, each followed by the log line it wrote (`results/capstone/run2/session_a_responses.json`, `session_a_log.jsonl`):
+Responses produced by `serve.py::ask` and recorded by `capstone_eval.py::ask` (HTTP code, whether the body was JSON, and the body's `error` and `fit_card`). Run 2, session A, one per kind of request, each followed by the log line it wrote (`results/capstone/before/run2/session_a_responses.json`, `session_a_log.jsonl`):
 
 ```json
 {
@@ -879,7 +879,7 @@ Responses produced by `serve.py::ask` and recorded by `capstone_eval.py::ask` (H
 
 ### Capstone Criterion 3 Output — cost fields
 
-Produced by `serve.py::usage_since`, which reads the counters in `generate.py::call_count` and `generate.py::token_counts`. Run 2, session A: the miss (`model_calls: 3`) followed by a correct `ok` and `no_match` line (`results/capstone/run2/session_a_log.jsonl`):
+Produced by `serve.py::usage_since`, which reads the counters in `generate.py::call_count` and `generate.py::token_counts`. Run 2, session A: the miss (`model_calls: 3`) followed by a correct `ok` and `no_match` line (`results/capstone/before/run2/session_a_log.jsonl`):
 
 ```
 {"timestamp": "2026-11-18T07:32:02+00:00", "status": "ok", "query": "vintage graphic tee under $30", "output": "Scored this gorgeous butterfly print Y2K baby tee on Depop for only $18 and I’m obsessed. I'm leaning all the way into the nostalgic vibes today, pairing it with baggy dark-wash jeans and chunky sneakers. It’s giving effortless 2000s comfort, but I can't wait to toughen it up with combat boots and a distressed denim jacket next time.", "seconds": 61.72, "model_calls": 3, "cache_hits": 0, "prompt_tokens": 492, "output_tokens": 200}
@@ -887,7 +887,7 @@ Produced by `serve.py::usage_since`, which reads the counters in `generate.py::c
 {"timestamp": "2026-11-18T07:32:21+00:00", "status": "no_match", "query": "designer ballgown size XXS under $5", "output": "No listings matched 'designer ballgown'. Try: raise your price limit above $5; try without size XXS; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.38, "model_calls": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
 ```
 
-Printed by `generate.py::generate` while that first request ran (`results/capstone/run2/server_real_key.out`):
+Printed by `generate.py::generate` while that first request ran (`results/capstone/before/run2/server_real_key.out`):
 
 ```
 [rate limit] service pushed back. Waiting 59s (attempt 1 of 5). This is the limiter doing its job, not a bug.
@@ -895,7 +895,7 @@ Printed by `generate.py::generate` while that first request ran (`results/capsto
 
 ### Capstone Criterion 4 Output — model unreachable
 
-Produced by `serve.py::ask`, on a server started with `GEMINI_API_KEY=not-a-real-key`. Run 2, session C: all 10 log lines from the 5 rounds (`results/capstone/run2/session_c_log.jsonl`):
+Produced by `serve.py::ask`, on a server started with `GEMINI_API_KEY=not-a-real-key`. Run 2, session C: all 10 log lines from the 5 rounds (`results/capstone/before/run2/session_c_log.jsonl`):
 
 ```
 {"timestamp": "2026-11-18T07:33:33+00:00", "status": "model_unavailable", "query": "vintage graphic tee under $30", "output": "Found Y2K Baby Tee — Butterfly Print, but couldn't reach the model to style it. The model rejected your API key. Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.google.com. Then run the same query again.", "seconds": 1.07, "model_calls": 1, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
@@ -910,7 +910,7 @@ Produced by `serve.py::ask`, on a server started with `GEMINI_API_KEY=not-a-real
 {"timestamp": "2026-11-18T07:33:36+00:00", "status": "no_match", "query": "ballet slippers size 2 under $4", "output": "No listings matched 'ballet slippers'. Try: raise your price limit above $4; try without size 2; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.35, "model_calls": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
 ```
 
-The responses from round 1: the matching query, the impossible query, and `/health`, recorded by `capstone_eval.py::session_c` (`results/capstone/run2/session_c_rounds.json`):
+The responses from round 1: the matching query, the impossible query, and `/health`, recorded by `capstone_eval.py::session_c` (`results/capstone/before/run2/session_c_rounds.json`):
 
 ```json
 {
@@ -939,7 +939,7 @@ The responses from round 1: the matching query, the impossible query, and `/heal
 
 ### Capstone Criterion 5 Output — speed
 
-Produced by `serve.py::ask` (`seconds` is `time.perf_counter()` around `run_agent()`) and written by `serve.py::log_run`. Run 2, session B: the 10 `ok` lines (`results/capstone/run2/session_b_log.jsonl`):
+Produced by `serve.py::ask` (`seconds` is `time.perf_counter()` around `run_agent()`) and written by `serve.py::log_run`. Run 2, session B: the 10 `ok` lines (`results/capstone/before/run2/session_b_log.jsonl`):
 
 ```
 {"timestamp": "2026-11-18T07:32:25+00:00", "status": "ok", "query": "vintage graphic tee under $30", "output": "Scored this Y2K baby tee with the cutest butterfly print on Depop for only $18 and I am obsessed. I'm styling it with baggy straight-leg jeans, chunky white sneakers, and a cropped zip hoodie for the ultimate nostalgic streetwear moment. Such a dreamy little vintage find!", "seconds": 2.48, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 494, "output_tokens": 178}
@@ -954,7 +954,7 @@ Produced by `serve.py::ask` (`seconds` is `time.perf_counter()` around `run_agen
 {"timestamp": "2026-11-18T07:33:31+00:00", "status": "ok", "query": "black boots", "output": "Just scored this oversized red and black plaid flannel shirt on thredUp for only $22, and it's already my new favorite layering piece. I’m leaning hard into the 90s grunge vibe today, wearing it open over a white ribbed tank with baggy dark wash jeans and black combat boots. It also looks so good buttoned up with wide-leg khakis and chunky sneakers for that effortless streetwear look.", "seconds": 3.67, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 496, "output_tokens": 204}
 ```
 
-Every rate-limit line printed by `generate.py::_wait_for_slot` and `generate.py::generate` on that server during sessions A and B (`results/capstone/run2/server_real_key.out`):
+Every rate-limit line printed by `generate.py::_wait_for_slot` and `generate.py::generate` on that server during sessions A and B (`results/capstone/before/run2/server_real_key.out`):
 
 ```
 [rate limit] service pushed back. Waiting 59s (attempt 1 of 5). This is the limiter doing its job, not a bug.
@@ -964,6 +964,72 @@ Every rate-limit line printed by `generate.py::_wait_for_slot` and `generate.py:
 [rate limit] 15 requests used this minute. Waiting 2s. This is normal.
 ```
 
+
+## Capstone Verdicts and Diagnosis
+
+| Criterion | Verdict |
+|---|---|
+| 1. One log line per request | **MET** — 15/15 in all three runs |
+| 2. The logged status matches what actually happened | **MET** — 15/15 in all three runs |
+| 3. The cost fields count the right things | **MISSED** — 10/10, 9/10, 10/10. The target was 100% in every run |
+| 4. When the model can't be reached, the failure is logged and the server keeps going | **MET** — 5/5 in all three runs |
+| 5. A real run finishes in under 20 seconds | **MET** — medians 2.67s, 3.78s and 3.75s, 9/10 under 30s in every run |
+
+**Diagnosis of criterion 3:**
+
+- **Where:** the call counter in `generate.py::generate`.
+- **How:** `generate()` adds 1 to `_session_calls` on every attempt, before it knows whether Gemini will answer. In Run 2, Gemini refused the first call with a rate-limit error (429), `generate()` retried it, and the retry was counted as another call, so the line logged `model_calls: 3` instead of 2.
+
+**The pattern:** this miss and the one slow run in each criterion 5 trial (42.69s, 32.66s, 37.68s) have the same cause: the rate limit in `generate.py`. The slow runs happened because my code paused after 15 calls in one minute. The miss happened because Google refused a call that my code thought was allowed. So it's one problem showing up in two places. Criterion 5 still passed because I allowed 2 slow runs out of 10.
+
+**Were the targets set too low?** Criterion 5 was. I set "median under 20 seconds" from Milestone 3, where the median was 19 seconds, but in these runs the median was 3–4 seconds, so the target never came close to failing. Model speed changes a lot from day to day, so I wouldn't tighten it all the way to 4 seconds. I'd tighten it to **median under 8 seconds**, which is about twice what I measured here, and keep "8 of 10 under 30 seconds".
+
+## Capstone Improvement
+
+**What I changed:** I added a second counter in `generate.py` that only counts calls Gemini actually answers. `serve.py` now logs that as `model_calls`, and logs refused calls in a new `refused_attempts` field. The old counter still counts every attempt, because the session budget needs it.
+
+This targets the diagnosis: the problem was that the counter counted attempts, so now `model_calls` only counts answers. I didn't change the rate limiter itself, since that would be a second fix.
+
+
+## Capstone Run Log — After
+
+| Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
+|---|---|---|---|---|---|
+| 1. One log line per request | 15 of 15 | 15/15 | 15/15 | 15/15 | MET |
+| 2. The logged status matches what actually happened | 15 of 15 | 15/15 | 15/15 | 15/15 | MET |
+| 3. The cost fields count the right things | 100% of lines | 10/10 | 10/10 | 10/10 | MET |
+| 4. When the model can't be reached, the failure is logged and the server keeps going | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 5. A real run finishes in under 20 seconds | median < 20s, 8 of 10 < 30s | median 3.65s, 9/10 < 30s | median 2.54s, 8/10 < 30s | median 4.09s, 8/10 < 30s | MET |
+
+**Before and after, side by side:**
+
+| Criterion | Before (Run 1 / 2 / 3) | After (Run 1 / 2 / 3) |
+|---|---|---|
+| 1 | 15/15, 15/15, 15/15 — MET | 15/15, 15/15, 15/15 — MET |
+| 2 | 15/15, 15/15, 15/15 — MET | 15/15, 15/15, 15/15 — MET |
+| 3 | 10/10, **9/10**, 10/10 — **MISSED** | 10/10, 10/10, 10/10 — **MET** |
+| 4 | 5/5, 5/5, 5/5 — MET | 5/5, 5/5, 5/5 — MET |
+| 5 | 2.67s / 3.78s / 3.75s, 9, 9, 9 of 10 < 30s — MET | 3.65s / 2.54s / 4.09s, 9, **8, 8** of 10 < 30s — MET |
+
+**The fix helped, it wasn't just lucky.** The miss only happens when Gemini refuses a call and my code retries it, and that's random. If it hadn't happened in the after runs, criterion 3 would have passed even without the fix. But it did happen, 3 times (only once in the before runs), and every time the log was correct: `model_calls: 2` for the 2 calls Gemini answered, and `refused_attempts: 1` for the refused one. Before the fix, these would have been logged as `model_calls: 3`. 
+
+```
+{"timestamp": "2026-11-18T07:57:03+00:00", "status": "ok", "query": "vintage graphic tee under $30", "output": "Scored this butterfly print Y2K baby tee on Depop for just $18 and I am obsessed! It’s giving major nostalgic streetwear energy paired with baggy dark wash jeans and chunky sneakers, but I can't wait to toughen it up with wide-leg trousers and combat boots next. My closet has officially peaked.", "seconds": 35.38, "model_calls": 2, "refused_attempts": 1, "cache_hits": 0, "prompt_tokens": 467, "output_tokens": 158}
+{"timestamp": "2026-11-18T07:59:02+00:00", "status": "ok", "query": "black boots", "output": "Scored this red and black oversized flannel on thredUp for just $22, and it’s officially my new uniform. I'm obsessed with throwing it over a ribbed tank with baggy denim and combat boots for that effortless 90s grunge look. Seriously never taking this off.", "seconds": 44.98, "model_calls": 2, "refused_attempts": 1, "cache_hits": 0, "prompt_tokens": 474, "output_tokens": 155}
+{"timestamp": "2026-11-18T08:00:11+00:00", "status": "ok", "query": "platform sneakers", "output": "Scoreeeed these chunky white platform sneakers on Poshmark for just $48 and I am never taking them off. They are giving major Y2K off-duty model mixed with effortless streetwear. Can't wait to pair them with baggy dark wash denim and my go-to cropped hoodie.", "seconds": 46.07, "model_calls": 2, "refused_attempts": 1, "cache_hits": 0, "prompt_tokens": 466, "output_tokens": 153}
+```
+
+Printed by `generate.py::generate` while those requests ran (`results/capstone/after/run2/server_real_key.out`, `run3/server_real_key.out`):
+
+```
+[rate limit] service pushed back. Waiting 32s (attempt 1 of 5). This is the limiter doing its job, not a bug.
+[rate limit] service pushed back. Waiting 32s (attempt 1 of 5). This is the limiter doing its job, not a bug.
+[rate limit] service pushed back. Waiting 36s (attempt 1 of 5). This is the limiter doing its job, not a bug.
+```
+
+**Did it help?** Yes, for criterion 3: it went from MISSED to MET, and the three refused calls show it working on the exact case that caused the miss. Criteria 1, 2 and 4 didn't change.
+
+**The trade:** criterion 5 got closer to missing. Runs 2 and 3 had exactly 8 of 10 under 30 seconds, the lowest my target allows. That's not caused by the fix, which only changes what gets counted, not how long anything takes. Those slow runs are the same refusals shown above: each one waited 32–36 seconds before retrying (35.38s, 44.98s, 46.07s). The fix makes those refusals *visible* in the log, but it doesn't make them happen less often. The real cause is the stage I didn't change: each new `serve.py` process starts with an empty rate limiter and doesn't know about calls made just before it started. Fixing that, for example by spacing out requests or remembering calls across restarts, is what I'd do next.
 
 <!-- ═════════════════════════════════════════════════════════════════════
 

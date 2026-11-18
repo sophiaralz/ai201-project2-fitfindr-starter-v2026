@@ -37,7 +37,8 @@ import time
 import config
 
 _call_times: list[float] = []
-_session_calls = 0
+_session_calls = 0      # every attempt, including ones the service refused
+_answered_calls = 0     # only attempts that came back with a response
 _cache_hits = 0
 _prompt_tokens = 0
 _output_tokens = 0
@@ -153,7 +154,19 @@ def usage() -> str:
 
 
 def call_count() -> int:
+    """Every attempt, including refused and retried ones. The budget uses this."""
     return _session_calls
+
+
+def answered_call_count() -> int:
+    """
+    Only calls that came back with a response.
+
+    A call the service refuses (a 429 that gets retried, a 503, a bad key) is
+    still an attempt, so call_count() counts it. It isn't a call that did any
+    work, though, so this one doesn't. serve.py logs this as model_calls.
+    """
+    return _answered_calls
 
 
 def token_counts() -> dict:
@@ -281,7 +294,7 @@ def generate(
     Every call in this course goes through here. If you need to change how the
     model is called, change it in this one place.
     """
-    global _session_calls, _cache_hits
+    global _session_calls, _answered_calls, _cache_hits
 
     use_cache = cache and config.CACHE_ENABLED
     temperature = config.TEMPERATURE if temperature is None else temperature
@@ -313,6 +326,7 @@ def generate(
             }
 
             response = client.models.generate_content(**kwargs)
+            _answered_calls += 1
             _record_tokens(response)
             text = (response.text or "").strip()
 

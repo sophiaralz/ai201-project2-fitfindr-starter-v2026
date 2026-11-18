@@ -1,0 +1,107 @@
+[
+  {
+    "query": "vintage graphic tee under $30",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored this vintage butterfly Y2K baby tee on Depop for just $18 and I am obsessed. Can't wait to style it with baggy straight-leg jeans and chunky sneakers for an effortless streetwear vibe. It also looks so cute dressed down with wide-leg khaki trousers and a black denim jacket for that perfect retro mix."
+  },
+  {
+    "query": "denim jacket under $50",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored this light wash cropped denim jacket on Poshmark for just $42 and I'm obsessed with how it fits. Double denim with baggy dark wash jeans and chunky sneakers is officially my new streetwear uniform. It also looks so good thrown over an oversized grey crewneck and khaki trousers for that perfect vintage layered vibe."
+  },
+  {
+    "query": "platform sneakers",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored these chunky white platform sneakers on Poshmark for just $48 and I am obsessed! They are giving major Y2K streetwear energy, especially paired with my baggy dark wash jeans and a cropped zip hoodie. Can't wait to style these platforms with everything!"
+  },
+  {
+    "query": "y2k baby tee",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored this adorable Y2K butterfly baby tee on Depop for just $18 and I’m so obsessed! I can't wait to style it with baggy dark-wash jeans and a cropped hoodie for that ultimate nostalgic streetwear vibe. It’s definitely going to be on heavy rotation in my closet."
+  },
+  {
+    "query": "cargo pants under $40",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored these khaki low-rise cargo pants on Poshmark for just $27 and I am officially living my 2000s streetwear dreams. I'm already planning to style them with a cropped zip hoodie and chunky sneakers for the ultimate nostalgic city fit, or dress them down with a ribbed tank and combat boots. Such a good find!"
+  },
+  {
+    "query": "designer ballgown size XXS under $5",
+    "http": 200,
+    "json": true,
+    "error": "No listings matched 'designer ballgown'. Try: raise your price limit above $5; try without size XXS; use broader words, like 'jacket' instead of a specific style.",
+    "fit_card": null
+  },
+  {
+    "query": "wedding dress under $2",
+    "http": 200,
+    "json": true,
+    "error": "No listings matched 'wedding dress'. Try: raise your price limit above $2; use broader words, like 'jacket' instead of a specific style.",
+    "fit_card": null
+  },
+  {
+    "query": "ski boots size 15 under $3",
+    "http": 200,
+    "json": true,
+    "error": "No listings matched 'ski boots'. Try: raise your price limit above $3; try without size 15; use broader words, like 'jacket' instead of a specific style.",
+    "fit_card": null
+  },
+  {
+    "query": "tuxedo size XXXL under $1",
+    "http": 200,
+    "json": true,
+    "error": "No listings matched 'tuxedo'. Try: raise your price limit above $1; try without size XXXL; use broader words, like 'jacket' instead of a specific style.",
+    "fit_card": null
+  },
+  {
+    "query": "ballet slippers size 2 under $4",
+    "http": 200,
+    "json": true,
+    "error": "No listings matched 'ballet slippers'. Try: raise your price limit above $4; try without size 2; use broader words, like 'jacket' instead of a specific style.",
+    "fit_card": null
+  },
+  {
+    "query": null,
+    "http": 400,
+    "json": true,
+    "error": "Send JSON with a 'query' field, e.g. {\"query\": \"vintage graphic tee under $30\"}",
+    "fit_card": null
+  },
+  {
+    "query": null,
+    "http": 400,
+    "json": true,
+    "error": "Send JSON with a 'query' field, e.g. {\"query\": \"vintage graphic tee under $30\"}",
+    "fit_card": null
+  },
+  {
+    "query": null,
+    "http": 400,
+    "json": true,
+    "error": "Send JSON with a 'query' field, e.g. {\"query\": \"vintage graphic tee under $30\"}",
+    "fit_card": null
+  },
+  {
+    "query": null,
+    "http": 400,
+    "json": true,
+    "error": "Send JSON with a 'query' field, e.g. {\"query\": \"vintage graphic tee under $30\"}",
+    "fit_card": null
+  },
+  {
+    "query": null,
+    "http": 400,
+    "json": true,
+    "error": "Send JSON with a 'query' field, e.g. {\"query\": \"vintage graphic tee under $30\"}",
+    "fit_card": null
+  }
+]

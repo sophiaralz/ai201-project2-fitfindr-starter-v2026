@@ -1,0 +1,72 @@
+[
+  {
+    "query": "vintage graphic tee under $30",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored this cute Y2K baby tee with the butterfly print on Depop for just $18 and I am obsessed. It’s giving total early 2000s streetwear vibes paired with baggy dark wash denim, chunky white sneakers, and a cropped zip hoodie. Can't wait to restyle it with khaki trousers and combat boots for that effortless vintage look."
+  },
+  {
+    "query": "denim jacket under $50",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Just scored this vintage light wash cropped denim jacket on Poshmark for only $42 and I'm already obsessed. I’m leaning fully into the streetwear vibe today by pairing it with a simple white tank, baggy dark wash jeans, and chunky sneakers. Honestly, it’s about to be my go-to layering piece for every outfit."
+  },
+  {
+    "query": "platform sneakers",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scoreeeed these chunky white platform sneakers on Poshmark for just $48 and I am never taking them off. They are giving major Y2K off-duty model mixed with effortless streetwear. Can't wait to pair them with baggy dark wash denim and my go-to cropped hoodie."
+  },
+  {
+    "query": "y2k baby tee",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored this Y2K butterfly print baby tee on Depop for just $18 and I am obsessed. Can't wait to style it with baggy dark-wash jeans and chunky sneakers for the ultimate Y2K streetwear moment. Such a good little vintage find!"
+  },
+  {
+    "query": "cargo pants under $40",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored these khaki low-rise cargo pants on Poshmark for just $27 and I am officially obsessed. I'm leaning all the way into the 2000s streetwear vibe by pairing them with a cropped zip hoodie and chunky sneakers. Such a win!"
+  },
+  {
+    "query": "band tee",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored this 2003 tour bootleg graphic tee on Depop for just $24, and it is officially my new favorite piece. I'm leaning all the way into the grunge edge today, pairing it with baggy dark wash jeans, combat boots, and my trusty black denim jacket. It has that *exact* heavy-metal, lived-in feel I’ve been hunting for."
+  },
+  {
+    "query": "mesh top",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored this black mesh long-sleeve top on Depop for only $15 and I am so obsessed with it. I’ve already planned a grungy layered look with a white tank, baggy jeans, and combat boots, plus a Y2K contrast fit with a cropped hoodie and khaki trousers. It’s seriously the ultimate layering piece for my wardrobe."
+  },
+  {
+    "query": "vintage jeans under $50",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored these vintage Levi's 501 jeans on Depop for just $38 and I am never taking them off. The medium wash is literally perfection for throwing on with chunky sneakers and a slouchy crewneck for that ultimate casual streetwear look. Can't wait to grunge them up with combat boots and a black zip hoodie next!"
+  },
+  {
+    "query": "cardigan",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored this chunky brown knit cardigan on Depop for just $35 and I am never taking it off. It’s giving the ultimate cozy, cottagecore energy whether I’m throwing it over baggy denim for a quick coffee run or buttoning it up with trousers and combat boots. My earth-tone wardrobe has officially peaked."
+  },
+  {
+    "query": "black boots",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Just scored this perfect oversized red and black plaid flannel on thredUp for only $22! I'm so obsessed with the 90s grunge energy and can't wait to layer it over a white tank with baggy jeans and chunky sneakers. It's giving major vintage streetwear vibes and is definitely staying in my closet forever."
+  }
+]

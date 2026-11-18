@@ -1,0 +1,72 @@
+[
+  {
+    "query": "vintage graphic tee under $30",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored this adorable Y2K butterfly print baby tee on Depop for just $18 and I’m obsessed. I can't wait to style it with baggy dark-wash jeans and chunky sneakers for the ultimate nostalgic streetwear vibe, or switch it up with wide-leg khakis and combat boots for a cool, grungy contrast. It’s officially my new favorite closet staple."
+  },
+  {
+    "query": "denim jacket under $50",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored this vintage light wash cropped denim jacket on Poshmark for just $42 and I'm obsessed. I’m already planning to style it two ways: leaning into the streetwear vibe with double denim and chunky sneakers, or mixing high-low with baggy khakis and combat boots. It’s officially my new everyday staple."
+  },
+  {
+    "query": "platform sneakers",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Just scored these amazing platform sneakers on Poshmark for only $48 and I am obsessed with the chunky sole. They are giving major Y2K streetwear energy whether I'm styling them with baggy jeans and a zip hoodie or dressing them down with oversized trousers. Can't wait to wear these everywhere!"
+  },
+  {
+    "query": "y2k baby tee",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored this adorable butterfly print Y2K baby tee on Depop for just $18 and I’m totally obsessed. It’s giving the ultimate sweet-and-sporty contrast layered under a cropped black hoodie with wide-leg trousers. Can't wait to live in this all season long!"
+  },
+  {
+    "query": "cargo pants under $40",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored these khaki low-rise cargo pants on Poshmark for just $27 and I am officially obsessed. I’m leaning all the way into the ultimate Y2K streetwear vibe by pairing them with a white ribbed tank, chunky sneakers, and an unzipped zip hoodie. They have that perfect effortless baggy fit that I've been hunting for everywhere!"
+  },
+  {
+    "query": "band tee",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored this bootleg 2003 tour graphic tee on Depop for just $24 and I'm obsessed. I'm leaning hard into the 90s grunge street vibe today with baggy denim and combat boots. It’s definitely going to be on heavy rotation in my wardrobe."
+  },
+  {
+    "query": "mesh top",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored this black mesh long-sleeve top on Depop for only $15 and I am so obsessed with how it looks. It’s got that ultimate Y2K grunge vibe layered over a white ribbed tank with baggy jeans and combat boots. Already planning to wear it with khaki trousers and a cropped zip hoodie for a cool contrast prep look!"
+  },
+  {
+    "query": "vintage jeans under $50",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Just scored these vintage Levi's 501 jeans on Depop for only $38 and I am obsessed. The medium wash is *so* good and they fit like an absolute dream. Already planning to live in them with a white tank and chunky sneakers for casual streetwear days, or dressed down with an oversized crewneck and combat boots."
+  },
+  {
+    "query": "cardigan",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored this chunky brown knit cardigan on Depop for just $35 and my cottagecore heart is so happy. It’s the ultimate oversized, earthy layer for throwing over a ribbed tank and baggy denim. Can't wait to live in this cozy knit all season long!"
+  },
+  {
+    "query": "black boots",
+    "http": 200,
+    "json": true,
+    "error": null,
+    "fit_card": "Scored this red and black oversized flannel shirt on thredUp for only $22 and I am so obsessed. I'm leaning hard into the 90s grunge and streetwear vibes by layering it over a crop hoodie with baggy trousers and chunky sneakers. Honestly, this is about to be my go-to piece all season."
+  }
+]

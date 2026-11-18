@@ -66,7 +66,11 @@ def usage_snapshot():
     """generate.py's running totals for the whole server process, right now."""
     tokens = generate.token_counts()
     return {
-        "model_calls": generate.call_count(),
+        # Calls that came back with an answer. A refused attempt that got
+        # retried used to be counted here too, so one run could log 3 calls
+        # for 2 calls' worth of work. Refused attempts get their own field.
+        "model_calls": generate.answered_call_count(),
+        "refused_attempts": generate.call_count() - generate.answered_call_count(),
         "cache_hits": generate._cache_hits,
         "prompt_tokens": tokens["prompt"],
         "output_tokens": tokens["output"],
