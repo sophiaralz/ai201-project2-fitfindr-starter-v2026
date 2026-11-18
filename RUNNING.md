@@ -155,6 +155,89 @@ the point of the session.
 
 ---
 
+## Capstone: running FitFindr locally with logs (Path B)
+
+FitFindr runs on my own machine as a small web server. It stays up until you
+stop it, and every request it answers writes one line to a log file.
+
+### What the environment needs
+
+| | |
+|---|---|
+| Python | **3.13.15** (3.11–3.13 work; 3.14 does not — see `requirements.txt`) |
+| Packages | `requirements.txt` — every package has a lower and upper version bound |
+| API key | A Gemini API key, in a `.env` file as `GEMINI_API_KEY=...` |
+| Model | `gemini-3.5-flash-lite`, called over the API |
+| Local model files | **None.** Nothing is downloaded or loaded locally |
+
+### Setup (once, from a fresh clone)
+
+```bash
+git clone https://github.com/sophiaralz/ai201-project2-fitfindr-starter-v2026.git fitfindr
+cd fitfindr
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env          # then paste your key into .env
+python test.py                # must pass before you go on
+```
+
+### Start it — one command
+
+```bash
+AI201_CACHE=0 python serve.py
+```
+
+`AI201_CACHE=0` turns off the answer cache, so every request really calls the
+model and the log shows real tokens and real timing. Without it, repeated
+queries come back from `.cache/` in under a second and log `0` tokens.
+
+Leave that terminal open. Ctrl-C stops the server.
+
+### Talk to it — from a second terminal
+
+```bash
+# Is it up?
+curl http://localhost:5000/health
+
+# A query that finds something (status "ok")
+curl -X POST http://localhost:5000/ask -H 'Content-Type: application/json' \
+  -d '{"query": "vintage graphic tee under $30"}'
+
+# A query that finds nothing (status "no_match")
+curl -X POST http://localhost:5000/ask -H 'Content-Type: application/json' \
+  -d '{"query": "designer ballgown size XXS under $5"}'
+
+# A request with no query (status "rejected")
+curl -X POST http://localhost:5000/ask -H 'Content-Type: application/json' -d '{}'
+```
+
+If port 5000 is taken (on macOS, AirPlay Receiver often uses it), start with
+`PORT=8000 AI201_CACHE=0 python serve.py` and use `localhost:8000` instead.
+
+### The log
+
+Every `/ask` request appends one JSON line to **`logs/runs.jsonl`** (the
+folder is created on the first request) and prints the same line in the
+server's terminal. Read the newest entries with `tail logs/runs.jsonl`.
+
+| Field | What it means |
+|---|---|
+| `timestamp` | When the request finished, in UTC |
+| `status` | How it ended: `ok`, `no_match` (search found nothing), `model_unavailable` (found an item but couldn't reach the model), `crashed` (the agent raised an exception), or `rejected` (no query in the request) |
+| `query` | What the user asked |
+| `output` | The fit card, or the error message the user got back |
+| `error` | On `crashed` and `rejected` lines, what went wrong (instead of `output`) |
+| `seconds` | How long `run_agent()` took |
+| `model_calls` | Real calls to the model this request made |
+| `cache_hits` | Answers that came from the cache instead of the model |
+| `prompt_tokens` / `output_tokens` | Tokens this request used, as reported by the API |
+
+A `rejected` line only has `timestamp`, `status` and `error`, because the
+request is turned away before the agent runs.
+
+---
+
 ## Where everything lives
 
 | File | What it does |
