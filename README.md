@@ -752,6 +752,54 @@ Combine the Y2K Baby Tee with your **Wide-leg khaki trousers** and slip onthe **
 
 Both behave the same as in unit 4: the matching query finds an item, suggests outfits and writes a fit card, and the impossible query stops at the empty-search branch with tips.
 
+## Instrumentation
+
+Every request to `/ask` writes one JSON line to `logs/runs.jsonl`. Each line has the time, the query (input), the fit card or error message (output), how many seconds the agent took, and a `status` saying how the run ended. It also has the cost fields I added: how many model calls the request made, how many answers came from the cache, and how many tokens it used. Requests with no query are logged as `rejected` before the agent runs, so those lines are shorter.
+
+This is the full log from one session, run with the cache off (`AI201_CACHE=0 python serve.py`). I sent matching queries until 10 came back `ok`, then one impossible query and one empty request on purpose. Two of the matching queries failed on their own: the model returned `503 UNAVAILABLE` ("experiencing high demand"), and the agent stopped and logged them as `model_unavailable` instead of crashing.
+
+```
+{"timestamp": "2026-11-18T06:27:25+00:00", "status": "ok", "query": "vintage graphic tee under $30", "output": "Scored this Y2K butterfly print baby tee on Depop for only $18 and I am obsessed. I’m leaning all the way into the nostalgic streetwear vibe by pairing it with baggy dark-wash jeans, chunky sneakers, and a cropped zip hoodie. Such a good little vintage find for my rotation!", "seconds": 12.91, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 487, "output_tokens": 174}
+{"timestamp": "2026-11-18T06:27:44+00:00", "status": "ok", "query": "denim jacket under $50", "output": "Scored this vintage cropped light wash denim jacket on Poshmark for just $42, and I am obsessed. I'm already planning to layer it over a black zip hoodie with khaki trousers for the ultimate effortless streetwear vibe. It's giving high-contrast denim sandwich energy, and I am never taking it off.", "seconds": 19.02, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 519, "output_tokens": 218}
+{"timestamp": "2026-11-18T06:28:26+00:00", "status": "ok", "query": "platform sneakers", "output": "Just scored these platform sneakers on Poshmark for only $48 and I am obsessed. They are giving major Y2K street vibes paired with my baggy dark wash jeans and a vintage denim jacket. Can't wait to style them with wide-leg trousers for that perfect off-duty grunge look, too!", "seconds": 42.28, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 493, "output_tokens": 183}
+{"timestamp": "2026-11-18T06:28:27+00:00", "status": "model_unavailable", "query": "leather jacket under $40", "output": "Found Leather Belt — Brown, Braided, but couldn't reach the model to style it. Couldn't reach the model: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}} Then run the same query again.", "seconds": 0.94, "model_calls": 1, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+{"timestamp": "2026-11-18T06:28:49+00:00", "status": "ok", "query": "y2k baby tee", "output": "Found this absolute gem of a butterfly print baby tee on Depop for just $18 and I am never taking it off. I’m living for that nostalgic Y2K streetwear energy today paired with baggy dark wash jeans and a cropped zip hoodie. It’s giving total early 2000s heartthrob vibes and fits like a glove!", "seconds": 22.22, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 488, "output_tokens": 184}
+{"timestamp": "2026-11-18T06:29:08+00:00", "status": "ok", "query": "cargo pants under $40", "output": "Score these low-rise khaki cargo pants on Poshmark for just $27 and I am so obsessed! They give off the ultimate off-duty streetwear vibe when I style them with a cropped hoodie and chunky sneakers. Can't wait to live in these all season long!", "seconds": 18.97, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 474, "output_tokens": 149}
+{"timestamp": "2026-11-18T06:29:27+00:00", "status": "ok", "query": "band tee", "output": "Scored this 2003 tour bootleg graphic tee on Depop for just $24 and I'm obsessed. I'm leaning all the way into the vibe with baggy dark-wash jeans, heavy combat boots, and a black denim jacket. Can't wait to beat this thing up and wear it everywhere.", "seconds": 19.24, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 500, "output_tokens": 187}
+{"timestamp": "2026-11-18T06:29:45+00:00", "status": "ok", "query": "mesh top", "output": "Scored this black mesh long-sleeve top on Depop for only $15 and I am so obsessed with it. I'm already planning to layer it for that ultimate Y2K grunge look with baggy jeans and combat boots, or keep it goth casual with wide-leg trousers and a zip hoodie. It's giving major dark academia meets 90s indie sleaze and I'm never taking it off.", "seconds": 17.79, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 484, "output_tokens": 203}
+{"timestamp": "2026-11-18T06:29:53+00:00", "status": "model_unavailable", "query": "graphic hoodie", "output": "Found Vintage Graphic Hoodie — Faded Black, but couldn't reach the model to style it. Couldn't reach the model: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}} Then run the same query again.", "seconds": 8.01, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 210, "output_tokens": 112}
+{"timestamp": "2026-11-18T06:30:11+00:00", "status": "ok", "query": "vintage jeans under $50", "output": "Scored these vintage Levi's 501 jeans on Depop for just $38 and I am never taking them off. They have that perfect broken-in feel for throwing on with a white tank, oversized crewneck, and chunky sneakers for casual streetwear days. Can't wait to switch up the vibe later with a black cropped hoodie and combat boots for some edgy contrast.", "seconds": 17.81, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 467, "output_tokens": 171}
+{"timestamp": "2026-11-18T06:30:34+00:00", "status": "ok", "query": "cardigan", "output": "Scored this dreamy chunky brown knit cardigan on Depop for just $35 and I'm never taking it off. It’s giving major cozy cottagecore energy and looks so good layered over a simple tank. Whether I'm throwing it on with baggy jeans for a casual coffee run or styling it with khaki trousers and combat boots for an earthy autumnal vibe, it's my new everyday uniform.", "seconds": 22.82, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 462, "output_tokens": 169}
+{"timestamp": "2026-11-18T06:30:49+00:00", "status": "ok", "query": "black boots", "output": "Scored this oversized flannel shirt on thredUp for just $22 and I am obsessed with the 90s grunge energy. It’s the ultimate layering piece whether I'm throwing it on over baggy denim or tying it around the waist of some wide-leg trousers for a more edgy look. Honestly the easiest streetwear upgrade for fall.", "seconds": 15.53, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 486, "output_tokens": 178}
+{"timestamp": "2026-11-18T06:30:50+00:00", "status": "no_match", "query": "designer ballgown size XXS under $5", "output": "No listings matched 'designer ballgown'. Try: raise your price limit above $5; try without size XXS; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.45, "model_calls": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+{"timestamp": "2026-11-18T06:30:50+00:00", "status": "rejected", "error": "no query in the request body"}
+```
+
+**What the log shows:**
+- **10 `ok` runs**, each with exactly 2 model calls (`suggest_outfit` and `create_fit_card`) and 0 cache hits, so every one is a real run.
+- **2 `model_unavailable` failures** from the model being overloaded (503). The `graphic hoodie` one failed on the second model call, so it still used 322 tokens and produced nothing.
+- **1 `no_match`** (the impossible query): 0 model calls, under half a second, because the agent stops before calling the model.
+- **1 `rejected`** (the empty request): turned away with HTTP 400 before the agent ran.
+
+## What It Costs
+
+**One successful run costs about 668 tokens and 21 seconds.**
+
+| Per `ok` run (10 runs) | Average | Median | Min | Max |
+|---|---|---|---|---|
+| Model calls | 2 | 2 | 2 | 2 |
+| Prompt tokens | 486 | 486.5 | 462 | 519 |
+| Output tokens | 181.6 | 180.5 | 149 | 218 |
+| **Total tokens** | **667.6** | | | |
+| Seconds | 20.86 | 19.0 | 12.91 | 42.28 |
+
+**How I measured it:** I started the server with the cache off (`AI201_CACHE=0 python serve.py`) so every request really called the model. I sent matching queries with a small script until 10 came back with `status: "ok"`, then averaged the `prompt_tokens`, `output_tokens` and `seconds` fields from those 10 log lines. The token numbers aren't estimates: `serve.py` reads `generate.py`'s counters before and after each run, and those counters add up the token counts the Gemini API reports on each response. `seconds` is measured around `run_agent()` with `time.perf_counter()`.
+
+**What the numbers mean:**
+- **Money:** I'm on the Gemini free tier, so the actual spend was $0. The real limits are the free tier's 15 requests per minute and its daily quota. Each successful run uses 2 of those requests.
+- **Time:** the seconds cover the whole agent run, including starting the MCP server process for the search, not just the model thinking. The rate limiter never paused during this session (it prints a message when it does, and none appeared), so the time is the model being slow to answer. The 42-second run is an outlier, and it happened right before the first 503, so my guess is the model was already overloaded at that moment.
+- **Failures cost something too:** a run that fails on the second model call still spends tokens. Out of 12 runs that reached the model, 2 failed (about 1 in 6), all from the 503.
+
 <!-- ═════════════════════════════════════════════════════════════════════
 
      SUBMISSION CHECKLIST — unit 3
