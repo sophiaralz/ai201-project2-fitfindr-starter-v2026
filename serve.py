@@ -46,6 +46,7 @@ import config  # noqa: F401
 
 from flask import Flask, jsonify, request
 
+import generate
 from agent import run_agent
 from utils.data_loader import get_example_wardrobe
 
@@ -59,6 +60,23 @@ def log_run(**fields):
     with LOG_FILE.open("a", encoding="utf-8") as f:
         f.write(line + "\n")
     print(line, flush=True)
+
+
+def usage_snapshot():
+    """generate.py's running totals for the whole server process, right now."""
+    tokens = generate.token_counts()
+    return {
+        "model_calls": generate.call_count(),
+        "cache_hits": generate._cache_hits,
+        "prompt_tokens": tokens["prompt"],
+        "output_tokens": tokens["output"],
+    }
+
+
+def usage_since(before):
+    """What one request used: the totals now, minus the totals before it ran."""
+    after = usage_snapshot()
+    return {key: after[key] - before[key] for key in before}
 
 
 # ── one request at a time ─────────────────────────────────────────────────────
@@ -152,17 +170,20 @@ def ask():
     failure = None
     session = None
     with _one_at_a_time:
+        before = usage_snapshot()
         started = time.perf_counter()
         try:
             session = run_agent(query, wardrobe)
         except Exception as exc:  # noqa: BLE001 — a 500 with a sentence beats a hang
             failure = f"{type(exc).__name__}: {exc}"
         seconds = round(time.perf_counter() - started, 2)
+        # Inside the lock, so no other request's model calls get counted here.
+        usage = usage_since(before)
 
     # Outside the lock: building a response is not work the next caller should
     # be waiting on.
     if failure is not None:
-        log_run(status="crashed", query=query, error=failure, seconds=seconds)
+        log_run(status="crashed", query=query, error=failure, seconds=seconds, **usage)
         return jsonify({"error": failure}), 500
 
     if session["error"] is None:
@@ -172,7 +193,7 @@ def ask():
     else:
         status = "model_unavailable"
 
-    log_run(status=status, query=query, output=session["fit_card"] or session["error"], seconds=seconds)
+    log_run(status=status, query=query, output=session["fit_card"] or session["error"], seconds=seconds, **usage)
 
     return jsonify(session)
 
