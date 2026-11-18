@@ -679,6 +679,20 @@ However, the parser only understands "$" prices and exact sizes. "under 30 dolla
 
 
 
+<!-- ═══════════════════════ CAPSTONE ═══════════════════════ -->
+
+## The Shape
+
+**System:** FitFindr. **Shape:** A — Deploy and instrument, on Path B (local with logs).
+
+Right now FitFindr only runs as a single command (`python app.py ask ...`). It answers one question and then quits. For the capstone, I'm making it stay running as a small web server using `serve.py`. You send a question to `/ask` and it runs the same `run_agent()` function the command line uses. There's also a `/health` route to check that the server is up. I'm also adding logging: every request to `/ask` saves one line to `logs/runs.jsonl` with the time, the query, whether it worked (`ok`, `no_match`, or `crashed`), the answer or error message, and how many seconds it took. I'm not changing how the agent works. I'm just adding a way to run it and a record of what happened each time.
+
+**Out of scope:**
+- **Hosting it online (Path A).** I'm running it on my own computer and saving the log in my repo instead. I chose this because both options are graded the same, I don't have to sign up for a hosting site, and my log won't get deleted when a free server shuts off after sitting unused.
+- **Changing the agent or the tools.** I'm not fixing the price/size parser gaps listed in What's Still Broken, and I'm not moving more tools onto MCP. If a request fails, I log it. I don't fix the agent in this unit.
+
+**Size check:** The server is already built, so I only have a few things left: clean up the log so every line has the same fields, write down how to start it in RUNNING.md, and make sure it works from a fresh copy of the repo. That should take way less than 90 minutes, which leaves plenty of time for writing criteria, testing, and the write-up.
+
 <!-- ═════════════════════════════════════════════════════════════════════
 
      SUBMISSION CHECKLIST — unit 3
