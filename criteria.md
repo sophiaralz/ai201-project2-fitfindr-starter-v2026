@@ -201,3 +201,5 @@ with `model_unavailable` don't count toward the 10.
 **Why this target:**
 
 In Milestone 3 my median was 19 seconds, but that was one session, and runs ranged from 13 to 42 seconds. I'm setting 20 seconds to test whether 19 was normal or a lucky session, not to give myself room. About 30 seconds is as long as I think someone would wait for a clothing suggestion before assuming it's broken. I allow 2 slow runs out of 10 because most of the time is the model answering, which I don't control. The 42-second run happened right when Gemini was overloaded.
+
+

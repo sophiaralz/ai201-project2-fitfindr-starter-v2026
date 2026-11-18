@@ -1,0 +1,159 @@
+
+FitFindr is listening on http://localhost:5062
+It runs one request at a time — a second one waits for the first.
+Ask it something (single quotes, as always):
+
+  curl -X POST http://localhost:5062/ask \
+    -H 'Content-Type: application/json' \
+    -d '{"query": "vintage graphic tee under $30"}'
+
+Ctrl-C to stop.
+
+ * Serving Flask app 'serve'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5062
+ * Running on http://172.16.65.144:5062
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [17/Nov/2026 23:35:05] "GET /health HTTP/1.1" 200 -
+[1] parse_query
+      in:  vintage graphic tee under $30
+      out: {'description': 'vintage graphic tee', 'size': None, 'max_price': 30.0}
+[2] search_listings
+      in:  {'description': 'vintage graphic tee', 'size': None, 'max_price': 30.0}
+      out: 10 items: Y2K Baby Tee — Butterfly Print, Graphic Tee — 2003 Tour Bootleg Style, Vintage Band Tee — Faded Grey … +7 more
+      →    called via MCP (mcp_server.py)
+[3] select_item
+      out: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+      →    took the first result
+[4] model_unavailable
+      out: The model rejected your API key. Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.goo…
+      →    model call failed -> stopping
+{"timestamp": "2026-11-18T07:35:06+00:00", "status": "model_unavailable", "query": "vintage graphic tee under $30", "output": "Found Y2K Baby Tee — Butterfly Print, but couldn't reach the model to style it. The model rejected your API key. Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.google.com. Then run the same query again.", "seconds": 1.1, "model_calls": 1, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+127.0.0.1 - - [17/Nov/2026 23:35:06] "POST /ask HTTP/1.1" 200 -
+[5] parse_query
+      in:  designer ballgown size XXS under $5
+      out: {'description': 'designer ballgown', 'size': 'XXS', 'max_price': 5.0}
+[6] search_listings
+      in:  {'description': 'designer ballgown', 'size': 'XXS', 'max_price': 5.0}
+      out: [] (empty)
+      →    called via MCP (mcp_server.py)
+[7] branch
+      out: No listings matched 'designer ballgown'. Try: raise your price limit above $5; try without size XXS; use broad…
+      →    search empty -> stopping before suggest_outfit
+{"timestamp": "2026-11-18T07:35:07+00:00", "status": "no_match", "query": "designer ballgown size XXS under $5", "output": "No listings matched 'designer ballgown'. Try: raise your price limit above $5; try without size XXS; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.35, "model_calls": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+127.0.0.1 - - [17/Nov/2026 23:35:07] "POST /ask HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 23:35:07] "GET /health HTTP/1.1" 200 -
+[8] parse_query
+      in:  denim jacket under $50
+      out: {'description': 'denim jacket', 'size': None, 'max_price': 50.0}
+[9] search_listings
+      in:  {'description': 'denim jacket', 'size': None, 'max_price': 50.0}
+      out: 7 items: Denim Jacket — Light Wash, Cropped, Vintage Levi's 501 Jeans — Medium Wash, 90s Track Jacket — Navy/White Stripe … +4 more
+      →    called via MCP (mcp_server.py)
+[10] select_item
+      out: Denim Jacket — Light Wash, Cropped ($42.0, poshmark)
+      →    took the first result
+[11] model_unavailable
+      out: The model rejected your API key. Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.goo…
+      →    model call failed -> stopping
+{"timestamp": "2026-11-18T07:35:07+00:00", "status": "model_unavailable", "query": "denim jacket under $50", "output": "Found Denim Jacket — Light Wash, Cropped, but couldn't reach the model to style it. The model rejected your API key. Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.google.com. Then run the same query again.", "seconds": 0.4, "model_calls": 1, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+127.0.0.1 - - [17/Nov/2026 23:35:07] "POST /ask HTTP/1.1" 200 -
+[12] parse_query
+      in:  wedding dress under $2
+      out: {'description': 'wedding dress', 'size': None, 'max_price': 2.0}
+[13] search_listings
+      in:  {'description': 'wedding dress', 'size': None, 'max_price': 2.0}
+      out: [] (empty)
+      →    called via MCP (mcp_server.py)
+[14] branch
+      out: No listings matched 'wedding dress'. Try: raise your price limit above $2; use broader words, like 'jacket' in…
+      →    search empty -> stopping before suggest_outfit
+{"timestamp": "2026-11-18T07:35:07+00:00", "status": "no_match", "query": "wedding dress under $2", "output": "No listings matched 'wedding dress'. Try: raise your price limit above $2; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.31, "model_calls": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+127.0.0.1 - - [17/Nov/2026 23:35:07] "POST /ask HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 23:35:07] "GET /health HTTP/1.1" 200 -
+[15] parse_query
+      in:  platform sneakers
+      out: {'description': 'platform sneakers', 'size': None, 'max_price': None}
+[16] search_listings
+      in:  {'description': 'platform sneakers', 'size': None, 'max_price': None}
+      out: 3 items: Platform Sneakers — White Chunky Sole, Platform Mary Janes — Black Patent, Low-Top Canvas Sneakers — Off-White
+      →    called via MCP (mcp_server.py)
+[17] select_item
+      out: Platform Sneakers — White Chunky Sole ($48.0, poshmark)
+      →    took the first result
+[18] model_unavailable
+      out: The model rejected your API key. Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.goo…
+      →    model call failed -> stopping
+{"timestamp": "2026-11-18T07:35:08+00:00", "status": "model_unavailable", "query": "platform sneakers", "output": "Found Platform Sneakers — White Chunky Sole, but couldn't reach the model to style it. The model rejected your API key. Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.google.com. Then run the same query again.", "seconds": 0.36, "model_calls": 1, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+127.0.0.1 - - [17/Nov/2026 23:35:08] "POST /ask HTTP/1.1" 200 -
+[19] parse_query
+      in:  ski boots size 15 under $3
+      out: {'description': 'ski boots', 'size': '15', 'max_price': 3.0}
+[20] search_listings
+      in:  {'description': 'ski boots', 'size': '15', 'max_price': 3.0}
+      out: [] (empty)
+      →    called via MCP (mcp_server.py)
+[21] branch
+      out: No listings matched 'ski boots'. Try: raise your price limit above $3; try without size 15; use broader words,…
+      →    search empty -> stopping before suggest_outfit
+{"timestamp": "2026-11-18T07:35:08+00:00", "status": "no_match", "query": "ski boots size 15 under $3", "output": "No listings matched 'ski boots'. Try: raise your price limit above $3; try without size 15; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.32, "model_calls": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+127.0.0.1 - - [17/Nov/2026 23:35:08] "POST /ask HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 23:35:08] "GET /health HTTP/1.1" 200 -
+[22] parse_query
+      in:  y2k baby tee
+      out: {'description': 'y2k baby tee', 'size': None, 'max_price': None}
+[23] search_listings
+      in:  {'description': 'y2k baby tee', 'size': None, 'max_price': None}
+      out: 9 items: Y2K Baby Tee — Butterfly Print, Low-Rise Cargo Pants — Khaki, Mesh Long-Sleeve Top — Black … +6 more
+      →    called via MCP (mcp_server.py)
+[24] select_item
+      out: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+      →    took the first result
+[25] model_unavailable
+      out: The model rejected your API key. Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.goo…
+      →    model call failed -> stopping
+{"timestamp": "2026-11-18T07:35:08+00:00", "status": "model_unavailable", "query": "y2k baby tee", "output": "Found Y2K Baby Tee — Butterfly Print, but couldn't reach the model to style it. The model rejected your API key. Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.google.com. Then run the same query again.", "seconds": 0.39, "model_calls": 1, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+127.0.0.1 - - [17/Nov/2026 23:35:08] "POST /ask HTTP/1.1" 200 -
+[26] parse_query
+      in:  tuxedo size XXXL under $1
+      out: {'description': 'tuxedo', 'size': 'XXXL', 'max_price': 1.0}
+[27] search_listings
+      in:  {'description': 'tuxedo', 'size': 'XXXL', 'max_price': 1.0}
+      out: [] (empty)
+      →    called via MCP (mcp_server.py)
+[28] branch
+      out: No listings matched 'tuxedo'. Try: raise your price limit above $1; try without size XXXL; use broader words, …
+      →    search empty -> stopping before suggest_outfit
+{"timestamp": "2026-11-18T07:35:09+00:00", "status": "no_match", "query": "tuxedo size XXXL under $1", "output": "No listings matched 'tuxedo'. Try: raise your price limit above $1; try without size XXXL; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.33, "model_calls": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+127.0.0.1 - - [17/Nov/2026 23:35:09] "POST /ask HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 23:35:09] "GET /health HTTP/1.1" 200 -
+[29] parse_query
+      in:  cargo pants under $40
+      out: {'description': 'cargo pants', 'size': None, 'max_price': 40.0}
+[30] search_listings
+      in:  {'description': 'cargo pants', 'size': None, 'max_price': 40.0}
+      out: 2 items: Low-Rise Cargo Pants — Khaki, Corduroy Wide-Leg Pants — Rust
+      →    called via MCP (mcp_server.py)
+[31] select_item
+      out: Low-Rise Cargo Pants — Khaki ($27.0, poshmark)
+      →    took the first result
+[32] model_unavailable
+      out: The model rejected your API key. Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.goo…
+      →    model call failed -> stopping
+{"timestamp": "2026-11-18T07:35:09+00:00", "status": "model_unavailable", "query": "cargo pants under $40", "output": "Found Low-Rise Cargo Pants — Khaki, but couldn't reach the model to style it. The model rejected your API key. Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.google.com. Then run the same query again.", "seconds": 0.48, "model_calls": 1, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+127.0.0.1 - - [17/Nov/2026 23:35:09] "POST /ask HTTP/1.1" 200 -
+[33] parse_query
+      in:  ballet slippers size 2 under $4
+      out: {'description': 'ballet slippers', 'size': '2', 'max_price': 4.0}
+[34] search_listings
+      in:  {'description': 'ballet slippers', 'size': '2', 'max_price': 4.0}
+      out: [] (empty)
+      →    called via MCP (mcp_server.py)
+[35] branch
+      out: No listings matched 'ballet slippers'. Try: raise your price limit above $4; try without size 2; use broader w…
+      →    search empty -> stopping before suggest_outfit
+{"timestamp": "2026-11-18T07:35:10+00:00", "status": "no_match", "query": "ballet slippers size 2 under $4", "output": "No listings matched 'ballet slippers'. Try: raise your price limit above $4; try without size 2; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.32, "model_calls": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+127.0.0.1 - - [17/Nov/2026 23:35:10] "POST /ask HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 23:35:10] "GET /health HTTP/1.1" 200 -

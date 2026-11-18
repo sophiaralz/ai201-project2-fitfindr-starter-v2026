@@ -800,6 +800,171 @@ This is the full log from one session, run with the cache off (`AI201_CACHE=0 py
 - **Time:** the seconds cover the whole agent run, including starting the MCP server process for the search, not just the model thinking. The rate limiter never paused during this session (it prints a message when it does, and none appeared), so the time is the model being slow to answer. The 42-second run is an outlier, and it happened right before the first 503, so my guess is the model was already overloaded at that moment.
 - **Failures cost something too:** a run that fails on the second model call still spends tokens. Out of 12 runs that reached the model, 2 failed (about 1 in 6), all from the 503.
 
+
+## Capstone Run Log
+
+| Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
+|---|---|---|---|---|---|
+| 1. One log line per request | 15 of 15 | 15/15 | 15/15 | 15/15 | MET |
+| 2. The logged status matches what actually happened | 15 of 15 | 15/15 | 15/15 | 15/15 | MET |
+| 3. The cost fields count the right things | 100% of lines | 10/10 | 9/10 | 10/10 | MISSED |
+| 4. When the model can't be reached, the failure is logged and the server keeps going | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 5. A real run finishes in under 20 seconds | median < 20s, 8 of 10 < 30s | median 2.67s, 9/10 < 30s | median 3.78s, 9/10 < 30s | median 3.75s, 9/10 < 30s | MET |
+
+
+### Capstone Criterion 1 Output — one log line per request
+
+Produced by `serve.py::log_run`, called from `serve.py::ask`. Run 2, session A: 15 requests, and these are the 15 lines `logs/runs.jsonl` gained (`results/capstone/run2/session_a_log.jsonl`):
+
+```
+{"timestamp": "2026-11-18T07:32:02+00:00", "status": "ok", "query": "vintage graphic tee under $30", "output": "Scored this gorgeous butterfly print Y2K baby tee on Depop for only $18 and I’m obsessed. I'm leaning all the way into the nostalgic vibes today, pairing it with baggy dark-wash jeans and chunky sneakers. It’s giving effortless 2000s comfort, but I can't wait to toughen it up with combat boots and a distressed denim jacket next time.", "seconds": 61.72, "model_calls": 3, "cache_hits": 0, "prompt_tokens": 492, "output_tokens": 200}
+{"timestamp": "2026-11-18T07:32:11+00:00", "status": "ok", "query": "denim jacket under $50", "output": "Scored this cropped light wash denim jacket on Poshmark for just $42, and it’s about to be my entire personality. I'm already planning to live in it with baggy dark-wash jeans for a double denim moment, or layered over a black zip hoodie with khakis for the ultimate casual streetwear fit. It has that perfectly broken-in vintage look that instantly pulls any outfit together.", "seconds": 8.9, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 504, "output_tokens": 220}
+{"timestamp": "2026-11-18T07:32:14+00:00", "status": "ok", "query": "platform sneakers", "output": "Scored these chunky white platforms on Poshmark for just $48 and I am obsessed! I'm already planning to live in them with baggy dark denim and a cropped zip hoodie for that ultimate Y2K streetwear vibe. They also look insanely good dressed down with wide-leg trousers and an oversized crewneck for easy, elevated neutrals.", "seconds": 3.27, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 466, "output_tokens": 162}
+{"timestamp": "2026-11-18T07:32:18+00:00", "status": "ok", "query": "y2k baby tee", "output": "Scored this Y2K butterfly print baby tee on Depop for just $18 and I am obsessed. It’s giving major nostalgic vibes, so I’m leaning into a casual Y2K street look with baggy dark-wash jeans and chunky sneakers. Can't wait to style it with wide-leg trousers and combat boots for an edgy contrast, too!", "seconds": 3.88, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 458, "output_tokens": 157}
+{"timestamp": "2026-11-18T07:32:21+00:00", "status": "ok", "query": "cargo pants under $40", "output": "Scored these khaki low-rise cargo pants on Poshmark for just $27 and I’m so obsessed with the fit. They’re giving major off-duty Y2K streetwear vibes, especially paired with my zip hoodie and chunky sneakers. Can't wait to grunge them up with a big crewneck and combat boots next!", "seconds": 3.0, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 480, "output_tokens": 168}
+{"timestamp": "2026-11-18T07:32:21+00:00", "status": "no_match", "query": "designer ballgown size XXS under $5", "output": "No listings matched 'designer ballgown'. Try: raise your price limit above $5; try without size XXS; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.38, "model_calls": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+{"timestamp": "2026-11-18T07:32:21+00:00", "status": "no_match", "query": "wedding dress under $2", "output": "No listings matched 'wedding dress'. Try: raise your price limit above $2; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.33, "model_calls": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+{"timestamp": "2026-11-18T07:32:22+00:00", "status": "no_match", "query": "ski boots size 15 under $3", "output": "No listings matched 'ski boots'. Try: raise your price limit above $3; try without size 15; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.32, "model_calls": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+{"timestamp": "2026-11-18T07:32:22+00:00", "status": "no_match", "query": "tuxedo size XXXL under $1", "output": "No listings matched 'tuxedo'. Try: raise your price limit above $1; try without size XXXL; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.4, "model_calls": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+{"timestamp": "2026-11-18T07:32:23+00:00", "status": "no_match", "query": "ballet slippers size 2 under $4", "output": "No listings matched 'ballet slippers'. Try: raise your price limit above $4; try without size 2; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.32, "model_calls": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+{"timestamp": "2026-11-18T07:32:23+00:00", "status": "rejected", "error": "no query in the request body"}
+{"timestamp": "2026-11-18T07:32:23+00:00", "status": "rejected", "error": "no query in the request body"}
+{"timestamp": "2026-11-18T07:32:23+00:00", "status": "rejected", "error": "no query in the request body"}
+{"timestamp": "2026-11-18T07:32:23+00:00", "status": "rejected", "error": "no query in the request body"}
+{"timestamp": "2026-11-18T07:32:23+00:00", "status": "rejected", "error": "no query in the request body"}
+```
+
+### Capstone Criterion 2 Output — status matches the response
+
+Responses produced by `serve.py::ask` and recorded by `capstone_eval.py::ask` (HTTP code, whether the body was JSON, and the body's `error` and `fit_card`). Run 2, session A, one per kind of request, each followed by the log line it wrote (`results/capstone/run2/session_a_responses.json`, `session_a_log.jsonl`):
+
+```json
+{
+  "query": "vintage graphic tee under $30",
+  "http": 200,
+  "json": true,
+  "error": null,
+  "fit_card": "Scored this gorgeous butterfly print Y2K baby tee on Depop for only $18 and I’m obsessed. I'm leaning all the way into the nostalgic vibes today, pairing it with baggy dark-wash jeans and chunky sneakers. It’s giving effortless 2000s comfort, but I can't wait to toughen it up with combat boots and a distressed denim jacket next time."
+}
+```
+```
+{"timestamp": "2026-11-18T07:32:02+00:00", "status": "ok", "query": "vintage graphic tee under $30", "output": "Scored this gorgeous butterfly print Y2K baby tee on Depop for only $18 and I’m obsessed. I'm leaning all the way into the nostalgic vibes today, pairing it with baggy dark-wash jeans and chunky sneakers. It’s giving effortless 2000s comfort, but I can't wait to toughen it up with combat boots and a distressed denim jacket next time.", "seconds": 61.72, "model_calls": 3, "cache_hits": 0, "prompt_tokens": 492, "output_tokens": 200}
+```
+
+```json
+{
+  "query": "designer ballgown size XXS under $5",
+  "http": 200,
+  "json": true,
+  "error": "No listings matched 'designer ballgown'. Try: raise your price limit above $5; try without size XXS; use broader words, like 'jacket' instead of a specific style.",
+  "fit_card": null
+}
+```
+```
+{"timestamp": "2026-11-18T07:32:21+00:00", "status": "no_match", "query": "designer ballgown size XXS under $5", "output": "No listings matched 'designer ballgown'. Try: raise your price limit above $5; try without size XXS; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.38, "model_calls": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+```
+
+```json
+{
+  "query": null,
+  "http": 400,
+  "json": true,
+  "error": "Send JSON with a 'query' field, e.g. {\"query\": \"vintage graphic tee under $30\"}",
+  "fit_card": null
+}
+```
+```
+{"timestamp": "2026-11-18T07:32:23+00:00", "status": "rejected", "error": "no query in the request body"}
+```
+
+### Capstone Criterion 3 Output — cost fields
+
+Produced by `serve.py::usage_since`, which reads the counters in `generate.py::call_count` and `generate.py::token_counts`. Run 2, session A: the miss (`model_calls: 3`) followed by a correct `ok` and `no_match` line (`results/capstone/run2/session_a_log.jsonl`):
+
+```
+{"timestamp": "2026-11-18T07:32:02+00:00", "status": "ok", "query": "vintage graphic tee under $30", "output": "Scored this gorgeous butterfly print Y2K baby tee on Depop for only $18 and I’m obsessed. I'm leaning all the way into the nostalgic vibes today, pairing it with baggy dark-wash jeans and chunky sneakers. It’s giving effortless 2000s comfort, but I can't wait to toughen it up with combat boots and a distressed denim jacket next time.", "seconds": 61.72, "model_calls": 3, "cache_hits": 0, "prompt_tokens": 492, "output_tokens": 200}
+{"timestamp": "2026-11-18T07:32:11+00:00", "status": "ok", "query": "denim jacket under $50", "output": "Scored this cropped light wash denim jacket on Poshmark for just $42, and it’s about to be my entire personality. I'm already planning to live in it with baggy dark-wash jeans for a double denim moment, or layered over a black zip hoodie with khakis for the ultimate casual streetwear fit. It has that perfectly broken-in vintage look that instantly pulls any outfit together.", "seconds": 8.9, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 504, "output_tokens": 220}
+{"timestamp": "2026-11-18T07:32:21+00:00", "status": "no_match", "query": "designer ballgown size XXS under $5", "output": "No listings matched 'designer ballgown'. Try: raise your price limit above $5; try without size XXS; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.38, "model_calls": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+```
+
+Printed by `generate.py::generate` while that first request ran (`results/capstone/run2/server_real_key.out`):
+
+```
+[rate limit] service pushed back. Waiting 59s (attempt 1 of 5). This is the limiter doing its job, not a bug.
+```
+
+### Capstone Criterion 4 Output — model unreachable
+
+Produced by `serve.py::ask`, on a server started with `GEMINI_API_KEY=not-a-real-key`. Run 2, session C: all 10 log lines from the 5 rounds (`results/capstone/run2/session_c_log.jsonl`):
+
+```
+{"timestamp": "2026-11-18T07:33:33+00:00", "status": "model_unavailable", "query": "vintage graphic tee under $30", "output": "Found Y2K Baby Tee — Butterfly Print, but couldn't reach the model to style it. The model rejected your API key. Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.google.com. Then run the same query again.", "seconds": 1.07, "model_calls": 1, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+{"timestamp": "2026-11-18T07:33:33+00:00", "status": "no_match", "query": "designer ballgown size XXS under $5", "output": "No listings matched 'designer ballgown'. Try: raise your price limit above $5; try without size XXS; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.37, "model_calls": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+{"timestamp": "2026-11-18T07:33:34+00:00", "status": "model_unavailable", "query": "denim jacket under $50", "output": "Found Denim Jacket — Light Wash, Cropped, but couldn't reach the model to style it. The model rejected your API key. Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.google.com. Then run the same query again.", "seconds": 0.43, "model_calls": 1, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+{"timestamp": "2026-11-18T07:33:34+00:00", "status": "no_match", "query": "wedding dress under $2", "output": "No listings matched 'wedding dress'. Try: raise your price limit above $2; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.33, "model_calls": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+{"timestamp": "2026-11-18T07:33:35+00:00", "status": "model_unavailable", "query": "platform sneakers", "output": "Found Platform Sneakers — White Chunky Sole, but couldn't reach the model to style it. The model rejected your API key. Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.google.com. Then run the same query again.", "seconds": 0.38, "model_calls": 1, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+{"timestamp": "2026-11-18T07:33:35+00:00", "status": "no_match", "query": "ski boots size 15 under $3", "output": "No listings matched 'ski boots'. Try: raise your price limit above $3; try without size 15; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.32, "model_calls": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+{"timestamp": "2026-11-18T07:33:35+00:00", "status": "model_unavailable", "query": "y2k baby tee", "output": "Found Y2K Baby Tee — Butterfly Print, but couldn't reach the model to style it. The model rejected your API key. Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.google.com. Then run the same query again.", "seconds": 0.38, "model_calls": 1, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+{"timestamp": "2026-11-18T07:33:36+00:00", "status": "no_match", "query": "tuxedo size XXXL under $1", "output": "No listings matched 'tuxedo'. Try: raise your price limit above $1; try without size XXXL; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.32, "model_calls": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+{"timestamp": "2026-11-18T07:33:36+00:00", "status": "model_unavailable", "query": "cargo pants under $40", "output": "Found Low-Rise Cargo Pants — Khaki, but couldn't reach the model to style it. The model rejected your API key. Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.google.com. Then run the same query again.", "seconds": 0.38, "model_calls": 1, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+{"timestamp": "2026-11-18T07:33:36+00:00", "status": "no_match", "query": "ballet slippers size 2 under $4", "output": "No listings matched 'ballet slippers'. Try: raise your price limit above $4; try without size 2; use broader words, like 'jacket' instead of a specific style.", "seconds": 0.35, "model_calls": 0, "cache_hits": 0, "prompt_tokens": 0, "output_tokens": 0}
+```
+
+The responses from round 1: the matching query, the impossible query, and `/health`, recorded by `capstone_eval.py::session_c` (`results/capstone/run2/session_c_rounds.json`):
+
+```json
+{
+  "matching": {
+    "query": "vintage graphic tee under $30",
+    "http": 200,
+    "json": true,
+    "error": "Found Y2K Baby Tee — Butterfly Print, but couldn't reach the model to style it. The model rejected your API key. Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.google.com. Then run the same query again.",
+    "fit_card": null
+  },
+  "impossible": {
+    "query": "designer ballgown size XXS under $5",
+    "http": 200,
+    "json": true,
+    "error": "No listings matched 'designer ballgown'. Try: raise your price limit above $5; try without size XXS; use broader words, like 'jacket' instead of a specific style.",
+    "fit_card": null
+  },
+  "health": {
+    "http": 200,
+    "body": {
+      "status": "ok"
+    }
+  }
+}
+```
+
+### Capstone Criterion 5 Output — speed
+
+Produced by `serve.py::ask` (`seconds` is `time.perf_counter()` around `run_agent()`) and written by `serve.py::log_run`. Run 2, session B: the 10 `ok` lines (`results/capstone/run2/session_b_log.jsonl`):
+
+```
+{"timestamp": "2026-11-18T07:32:25+00:00", "status": "ok", "query": "vintage graphic tee under $30", "output": "Scored this Y2K baby tee with the cutest butterfly print on Depop for only $18 and I am obsessed. I'm styling it with baggy straight-leg jeans, chunky white sneakers, and a cropped zip hoodie for the ultimate nostalgic streetwear moment. Such a dreamy little vintage find!", "seconds": 2.48, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 494, "output_tokens": 178}
+{"timestamp": "2026-11-18T07:32:28+00:00", "status": "ok", "query": "denim jacket under $50", "output": "Scored this vintage light wash cropped denim jacket on Poshmark for only $42, and I'm already obsessed. Throwing it on over a black zip hoodie with wide-leg khaki trousers and combat boots for the ultimate 90s streetwear vibe. It’s definitely going to be my new daily go-to jacket!", "seconds": 2.64, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 472, "output_tokens": 174}
+{"timestamp": "2026-11-18T07:32:31+00:00", "status": "ok", "query": "platform sneakers", "output": "Scored these chunky platform sneakers on Poshmark for just $48 and I am obsessed. They are bringing all the Y2K street vibes to my closet today. Can't wait to style them with a cropped hoodie and baggy jeans.", "seconds": 3.58, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 473, "output_tokens": 149}
+{"timestamp": "2026-11-18T07:33:04+00:00", "status": "ok", "query": "y2k baby tee", "output": "Scored this absolute dream of a Y2K baby tee with the cutest butterfly print on Depop for just $18! I'm so obsessed with the nostalgic streetwear energy it brings, especially paired with baggy dark wash jeans and chunky sneakers. It’s giving effortless retro vibes, but I can't wait to style it with wide-leg trousers for a cool, casual contrast too.", "seconds": 32.66, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 496, "output_tokens": 199}
+{"timestamp": "2026-11-18T07:33:12+00:00", "status": "ok", "query": "cargo pants under $40", "output": "Just scored these khaki low-rise cargo pants on Poshmark for only $27, and I am obsessed. I'm totally leaning into the ultimate 2000s streetwear vibe by pairing them with a white ribbed tank, an unzipped black cropped hoodie, and chunky sneakers. Such a good secondhand win!", "seconds": 7.97, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 498, "output_tokens": 182}
+{"timestamp": "2026-11-18T07:33:15+00:00", "status": "ok", "query": "band tee", "output": "Score this 2003 tour bootleg style graphic tee on Depop for just $24 and I'm honestly obsessed. I'm styling it with dark wash baggy jeans and combat boots for that effortless 90s grunge vibe. Total instant favorite in my rotation.", "seconds": 2.98, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 534, "output_tokens": 211}
+{"timestamp": "2026-11-18T07:33:20+00:00", "status": "ok", "query": "mesh top", "output": "Scored this black mesh long-sleeve top on Depop for just $15 and I am so obsessed with it. It’s got that ultimate 90s goth-grunge energy and is going to be my new go-to for layering. Can’t wait to style it with baggy dark denim and combat boots for a moody look, or throw a cropped zip hoodie over it with wide-leg trousers for peak Y2K contrast.", "seconds": 4.82, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 464, "output_tokens": 187}
+{"timestamp": "2026-11-18T07:33:24+00:00", "status": "ok", "query": "vintage jeans under $50", "output": "Just scored these vintage Levi's 501 jeans on Depop for only $38 and I am never taking them off. They have that perfect broken-in feel for throwing on with a white tank and chunky sneakers for casual streetwear days. Already planning to style them with a cropped hoodie and combat boots too for a little bit of edge.", "seconds": 4.17, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 467, "output_tokens": 163}
+{"timestamp": "2026-11-18T07:33:28+00:00", "status": "ok", "query": "cardigan", "output": "Scored this chunky brown knit cardigan on Depop for just $35 and it’s basically a wearable hug. I'm so obsessed with the cozy earth-tone vibe that I've already planned two ways to wear it—either thrown over wide-leg trousers for that rustic neutral look, or buttoned up with dark wash denim and combat boots for some edgy cottagecore energy. Definitely my new favorite fall staple!", "seconds": 3.88, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 490, "output_tokens": 201}
+{"timestamp": "2026-11-18T07:33:31+00:00", "status": "ok", "query": "black boots", "output": "Just scored this oversized red and black plaid flannel shirt on thredUp for only $22, and it's already my new favorite layering piece. I’m leaning hard into the 90s grunge vibe today, wearing it open over a white ribbed tank with baggy dark wash jeans and black combat boots. It also looks so good buttoned up with wide-leg khakis and chunky sneakers for that effortless streetwear look.", "seconds": 3.67, "model_calls": 2, "cache_hits": 0, "prompt_tokens": 496, "output_tokens": 204}
+```
+
+Every rate-limit line printed by `generate.py::_wait_for_slot` and `generate.py::generate` on that server during sessions A and B (`results/capstone/run2/server_real_key.out`):
+
+```
+[rate limit] service pushed back. Waiting 59s (attempt 1 of 5). This is the limiter doing its job, not a bug.
+[rate limit] 15 requests used this minute. Waiting 29s. This is normal.
+[rate limit] 15 requests used this minute. Waiting 2s. This is normal.
+[rate limit] 15 requests used this minute. Waiting 4s. This is normal.
+[rate limit] 15 requests used this minute. Waiting 2s. This is normal.
+```
+
+
 <!-- ═════════════════════════════════════════════════════════════════════
 
      SUBMISSION CHECKLIST — unit 3
