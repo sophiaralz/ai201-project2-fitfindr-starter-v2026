@@ -681,7 +681,13 @@ However, the parser only understands "$" prices and exact sizes. "under 30 dolla
 
 <!-- ═══════════════════════ CAPSTONE ═══════════════════════ -->
 
-## The Shape
+## Capstone
+
+**What This Extends**
+
+This extends **FitFindr**, my thrift-shopping agent from Project 2 (units 3 and 4). Before, it only ran as a single command that answered one question and quit. What's new: it runs as a web server (`serve.py`) and I added the instrumentation around it. Every `/ask` request writes one structured log line with a status, the timing, and what that request cost (model calls, refused attempts, cache hits, and tokens). I also wrote `capstone_eval.py` to run my criteria, and made one fix in `generate.py` to how model calls are counted.
+
+**The Shape**
 
 **System:** FitFindr. **Shape:** A — Deploy and instrument, on Path B (local with logs).
 
@@ -694,7 +700,7 @@ Right now FitFindr only runs as a single command (`python app.py ask ...`). It a
 **Size check:** The server is already built, so I only have a few things left: clean up the log so every line has the same fields, add the per-request cost fields (model calls, cache hits, tokens), write down how to start it in RUNNING.md, and make sure it works from a fresh copy of the repo. That should take way less than 90 minutes, which leaves plenty of time for writing criteria, testing, and the write-up.
 
 
-### Regression check
+*Regression check (after building the extension)*
 
 After adding logging to serve.py, I re-ran the original command line to make sure nothing broke.
 
@@ -752,7 +758,11 @@ Combine the Y2K Baby Tee with your **Wide-leg khaki trousers** and slip onthe **
 
 Both behave the same as in unit 4: the matching query finds an item, suggests outfits and writes a fit card, and the impossible query stops at the empty-search branch with tips.
 
-## Instrumentation
+**Running It**
+
+Path B — local with logs. It starts with one command, `AI201_CACHE=0 python serve.py`, and everything else is in [RUNNING.md](RUNNING.md) under "Capstone: running FitFindr locally with logs (Path B)": the setup steps, the environment (Python 3.13.15, pinned packages in `requirements.txt`, no local model files), example requests, and what every log field means. I tested those instructions from a fresh clone of the repo. The run record is committed in `logs/runs.jsonl` and `results/capstone/`.
+
+**Instrumentation**
 
 Every request to `/ask` writes one JSON line to `logs/runs.jsonl`. Each line has the time, the query (input), the fit card or error message (output), how many seconds the agent took, and a `status` saying how the run ended. It also has the cost fields I added: how many model calls the request made, how many answers came from the cache, and how many tokens it used. Requests with no query are logged as `rejected` before the agent runs, so those lines are shorter.
 
@@ -781,7 +791,7 @@ This is the full log from one session, run with the cache off (`AI201_CACHE=0 py
 - **1 `no_match`** (the impossible query): 0 model calls, under half a second, because the agent stops before calling the model.
 - **1 `rejected`** (the empty request): turned away with HTTP 400 before the agent ran.
 
-## What It Costs
+**What It Costs**
 
 **One successful run costs about 668 tokens and 21 seconds.**
 
@@ -800,8 +810,20 @@ This is the full log from one session, run with the cache off (`AI201_CACHE=0 py
 - **Time:** the seconds cover the whole agent run, including starting the MCP server process for the search, not just the model thinking. The rate limiter never paused during this session (it prints a message when it does, and none appeared), so the time is the model being slow to answer. The 42-second run is an outlier, and it happened right before the first 503, so my guess is the model was already overloaded at that moment.
 - **Failures cost something too:** a run that fails on the second model call still spends tokens. Out of 12 runs that reached the model, 2 failed (about 1 in 6), all from the 503.
 
+**For 100 people a day**, assuming each person runs one successful search:
 
-## Capstone Run Log — Before
+```
+tokens:       100 runs × 668 tokens per run  = 66,800 tokens a day
+model calls:  100 runs × 2 calls per run     = 200 model calls a day
+money:        200 calls × $0 (free tier)     = $0 a day
+```
+
+Running FitFindr for 100 people a day would use about 66,800 tokens and 200 model calls, which costs $0 on the free tier. The real limit is 15 calls per minute, so it only works if those 100 people don't all show up at once: 200 calls ÷ 15 per minute is about 13 minutes of model time.
+
+
+**Run Log and Verdicts**
+
+*Before the fix:*
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
@@ -812,7 +834,7 @@ This is the full log from one session, run with the cache off (`AI201_CACHE=0 py
 | 5. A real run finishes in under 20 seconds | median < 20s, 8 of 10 < 30s | median 2.67s, 9/10 < 30s | median 3.78s, 9/10 < 30s | median 3.75s, 9/10 < 30s | MET |
 
 
-### Capstone Criterion 1 Output — one log line per request
+*Criterion 1 output — one log line per request*
 
 Produced by `serve.py::log_run`, called from `serve.py::ask`. Run 2, session A: 15 requests, and these are the 15 lines `logs/runs.jsonl` gained (`results/capstone/before/run2/session_a_log.jsonl`):
 
@@ -834,7 +856,7 @@ Produced by `serve.py::log_run`, called from `serve.py::ask`. Run 2, session A: 
 {"timestamp": "2026-11-18T07:32:23+00:00", "status": "rejected", "error": "no query in the request body"}
 ```
 
-### Capstone Criterion 2 Output — status matches the response
+*Criterion 2 output — status matches the response*
 
 Responses produced by `serve.py::ask` and recorded by `capstone_eval.py::ask` (HTTP code, whether the body was JSON, and the body's `error` and `fit_card`). Run 2, session A, one per kind of request, each followed by the log line it wrote (`results/capstone/before/run2/session_a_responses.json`, `session_a_log.jsonl`):
 
@@ -877,7 +899,7 @@ Responses produced by `serve.py::ask` and recorded by `capstone_eval.py::ask` (H
 {"timestamp": "2026-11-18T07:32:23+00:00", "status": "rejected", "error": "no query in the request body"}
 ```
 
-### Capstone Criterion 3 Output — cost fields
+*Criterion 3 output — cost fields*
 
 Produced by `serve.py::usage_since`, which reads the counters in `generate.py::call_count` and `generate.py::token_counts`. Run 2, session A: the miss (`model_calls: 3`) followed by a correct `ok` and `no_match` line (`results/capstone/before/run2/session_a_log.jsonl`):
 
@@ -893,7 +915,7 @@ Printed by `generate.py::generate` while that first request ran (`results/capsto
 [rate limit] service pushed back. Waiting 59s (attempt 1 of 5). This is the limiter doing its job, not a bug.
 ```
 
-### Capstone Criterion 4 Output — model unreachable
+*Criterion 4 output — model unreachable*
 
 Produced by `serve.py::ask`, on a server started with `GEMINI_API_KEY=not-a-real-key`. Run 2, session C: all 10 log lines from the 5 rounds (`results/capstone/before/run2/session_c_log.jsonl`):
 
@@ -937,7 +959,7 @@ The responses from round 1: the matching query, the impossible query, and `/heal
 }
 ```
 
-### Capstone Criterion 5 Output — speed
+*Criterion 5 output — speed*
 
 Produced by `serve.py::ask` (`seconds` is `time.perf_counter()` around `run_agent()`) and written by `serve.py::log_run`. Run 2, session B: the 10 `ok` lines (`results/capstone/before/run2/session_b_log.jsonl`):
 
@@ -965,7 +987,7 @@ Every rate-limit line printed by `generate.py::_wait_for_slot` and `generate.py:
 ```
 
 
-## Capstone Verdicts and Diagnosis
+*Verdicts and diagnosis:*
 
 | Criterion | Verdict |
 |---|---|
@@ -984,14 +1006,14 @@ Every rate-limit line printed by `generate.py::_wait_for_slot` and `generate.py:
 
 **Were the targets set too low?** Criterion 5 was. I set "median under 20 seconds" from Milestone 3, where the median was 19 seconds, but in these runs the median was 3–4 seconds, so the target never came close to failing. Model speed changes a lot from day to day, so I wouldn't tighten it all the way to 4 seconds. I'd tighten it to **median under 8 seconds**, which is about twice what I measured here, and keep "8 of 10 under 30 seconds".
 
-## Capstone Improvement
+**The Improvement**
 
 **What I changed:** I added a second counter in `generate.py` that only counts calls Gemini actually answers. `serve.py` now logs that as `model_calls`, and logs refused calls in a new `refused_attempts` field. The old counter still counts every attempt, because the session budget needs it.
 
 This targets the diagnosis: the problem was that the counter counted attempts, so now `model_calls` only counts answers. I didn't change the rate limiter itself, since that would be a second fix.
 
 
-## Capstone Run Log — After
+*Run log after the fix:*
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
@@ -1030,6 +1052,46 @@ Printed by `generate.py::generate` while those requests ran (`results/capstone/a
 **Did it help?** Yes, for criterion 3: it went from MISSED to MET, and the three refused calls show it working on the exact case that caused the miss. Criteria 1, 2 and 4 didn't change.
 
 **The trade:** criterion 5 got closer to missing. Runs 2 and 3 had exactly 8 of 10 under 30 seconds, the lowest my target allows. That's not caused by the fix, which only changes what gets counted, not how long anything takes. Those slow runs are the same refusals shown above: each one waited 32–36 seconds before retrying (35.38s, 44.98s, 46.07s). The fix makes those refusals *visible* in the log, but it doesn't make them happen less often. The real cause is the stage I didn't change: each new `serve.py` process starts with an empty rate limiter and doesn't know about calls made just before it started. Fixing that, for example by spacing out requests or remembering calls across restarts, is what I'd do next.
+
+**What's Still Broken**
+
+No criterion is still missed. After the fix, all five were met in all three runs.
+
+**The target I set too low is criterion 5.** I set "median under 20 seconds" because my median in Milestone 3 was 19 seconds, but every test run after that had a median of 2.5–4 seconds, so it never came close to failing. I'd tighten it to **a median under 8 seconds**. That's about twice what I measured, so it leaves room for Gemini having a slow day but can still fail.
+
+**Things that are still broken but aren't in my criteria:**
+- **Gemini still refuses calls sometimes.** My fix made refusals show up correctly in the log, but they still happen, and each one adds 30–60 seconds. The cause is that every new `serve.py` process starts with an empty rate limiter. I stopped there because fixing it would be a second change, and the milestone allows one.
+- **"leather jacket under $40" returns a leather belt.** The search matches on the word "leather" and the agent takes the first result. I left it because changing the agent was out of scope for the capstone.
+
+*What I'd do next:*
+
+The first thing I'd fix is that the rate limiter forgets its recent calls every time the server restarts. I'd do that by saving the call times to a file so the new server knows about them. This one problem caused my only miss and all my slow runs, and a real server restarts often, so it would keep happening.
+
+**How I Used AI**
+
+**Moment 1**
+
+- *What I asked for:* After I added logging, my `curl` to `/ask` returned an HTML "500 Internal Server Error" page, and I asked Claude why.
+- *What came back:* It found a typo in my `log_run` function: `isoformat(timespace="seconds")` should be `timespec`. It explained I got an HTML page instead of my JSON error because `log_run` ran outside the `try`/`except` around `run_agent()`. Right after, I got `NameError: name 'time' is not defined`, because I used `time.perf_counter()` without importing `time`.
+- *What I changed:* I fixed both and added the `status` field, but I forgot to delete my old `log_run` call. When Claude checked my log, every request had been logged twice. I removed the old line, and that's why my criterion 1 checks for duplicates.
+
+**Moment 2**
+
+- *What I asked for:* The basic logging came from the class follow-along, so I asked Claude what I could add that would be my own work. It suggested per-request cost tracking or a `/stats` endpoint, and I chose only cost tracking.
+- *What came back:* It added fields that read `generate.py`'s counters before and after each run. 
+- *What I changed:* The cause was that `generate.py` counts every attempt, including calls Gemini refused and retried. I picked one fix: only count answered calls as `model_calls`, and log refused calls separately. In the after runs Gemini refused 3 calls, and all 3 were logged correctly.
+
+**Moment 3**
+
+- *What I asked for:* I asked Claude to fill in What It Costs from my 10 measured runs.
+- *What came back:* It wrote that my 42-second run happened because my rate limiter paused.
+- *What I changed:* When I checked the server output, there was no rate-limit message, so that explanation was wrong and I corrected it. After that I checked claims against the real output. 
+
+**Moment 4**
+
+- *What I asked for:* For Milestone 4, I asked Claude to write me a script in which I could test my criteria. 
+- *What came back:* It wrote `capstone_eval.py`, the script that runs those criteria three times and counts the results.
+- *What I changed:* I had to rewrite some of the code to make more sense for the users. 
 
 <!-- ═════════════════════════════════════════════════════════════════════
 
