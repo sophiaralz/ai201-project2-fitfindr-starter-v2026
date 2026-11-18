@@ -693,6 +693,65 @@ Right now FitFindr only runs as a single command (`python app.py ask ...`). It a
 
 **Size check:** The server is already built, so I only have a few things left: clean up the log so every line has the same fields, write down how to start it in RUNNING.md, and make sure it works from a fresh copy of the repo. That should take way less than 90 minutes, which leaves plenty of time for writing criteria, testing, and the write-up.
 
+
+### Regression check
+
+After adding logging to serve.py, I re-ran the original command line to make sure nothing broke.
+
+`python app.py ask 'vintage graphic tee under $30'`
+
+```
+[1] parse_query
+      in:  vintage graphic tee under $30
+      out: {'description': 'vintage graphic tee', 'size': None, 'max_price': 30.0}
+[2] search_listings
+      in:  {'description': 'vintage graphic tee', 'size': None, 'max_price': 30.0}
+      out: 10 items: Y2K Baby Tee — Butterfly Print, Graphic Tee — 2003 Tour Bootleg Style, Vintage Band Tee — Faded Grey … +7 more
+      →    called via MCP (mcp_server.py)
+[3] select_item
+      out: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+      →    took the first result
+[4] suggest_outfit
+      in:  item: Y2K Baby Tee — Butterfly Print | wardrobe: 10 pieces
+      out: **Outfit 1: Effortless Y2K Street** Pair the Y2K Baby Tee with your **Baggy straight-leg jeans, dark wash** an…
+[5] create_fit_card
+      in:  item: Y2K Baby Tee — Butterfly Print | outfit: **Outfit 1: Effortless Y2K Street** Pair the Y2K Baby Tee with …
+      out: Scored this butterfly print Y2K baby tee on Depop for just $18 and I am obsessed. It's giving total early 2000…
+
+  Found:    Y2K Baby Tee — Butterfly Print — $18.0 on depop
+
+  Outfit:   **Outfit 1: Effortless Y2K Street**
+Pair the Y2K Baby Tee with your **Baggy straight-leg jeans, dark wash** and layer the **Black cropped zip hoodie** over top. Finish with **Chunky white sneakers** and your **Black crossbody bag**. 
+
+**Outfit 2: Casual Contrast**
+Combine the Y2K Baby Tee with your **Wide-leg khaki trousers** and slip onthe **Vintage black denim jacket**. Accessorize with the **Brown leather belt** and **Chunky white sneakers**.
+
+  Fit card: Scored this butterfly print Y2K baby tee on Depop for just $18and I am obsessed. It's giving total early 2000s street style paired with my baggy dark wash jeans and a cropped zip hoodie. Can't wait to wear it all spring!
+
+0 model calls this session, 2 served from cache
+```
+
+`python app.py ask 'designer ballgown size XXS under $5'`
+
+```
+[1] parse_query
+      in:  designer ballgown size XXS under $5
+      out: {'description': 'designer ballgown', 'size': 'XXS', 'max_price': 5.0}
+[2] search_listings
+      in:  {'description': 'designer ballgown', 'size': 'XXS', 'max_price': 5.0}
+      out: [] (empty)
+      →    called via MCP (mcp_server.py)
+[3] branch
+      out: No listings matched 'designer ballgown'. Try: raise your price limit above $5; try without size XXS; use broad…
+      →    search empty -> stopping before suggest_outfit
+
+  No listings matched 'designer ballgown'. Try: raise your price limit above $5; try without size XXS; use broader words, like 'jacket' instead of a specific style.
+
+0 model calls this session
+```
+
+Both behave the same as in unit 4: the matching query finds an item, suggests outfits and writes a fit card, and the impossible query stops at the empty-search branch with tips.
+
 <!-- ═════════════════════════════════════════════════════════════════════
 
      SUBMISSION CHECKLIST — unit 3
